@@ -4,7 +4,7 @@ from matplotlib import pyplot as plt
 
 img = cv.imread("water_coins.jpg")
 assert img is not None , "file could not be read"
-edges = cv.Canny(img,180,200)
+edges = cv.Canny(img,180,200,apertureSize=5)
 
 plt.subplot(121),plt.imshow(img,cmap="gray")
 plt.title("Original image"),plt.xticks([]),plt.yticks([])
