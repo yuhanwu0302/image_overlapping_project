@@ -7,7 +7,7 @@ import re
 
 x_li=[]
 y_li=[]
-with open("contours_1_0625.csv") as f:
+with open(r"C:\Users\baba\Desktop\image_processing_opencv\contours\contours_2_0627.csv") as f:
     for row in f.readlines():
         result = re.search(r"(\d+)\s+(\d+)",row)
         x,y = result.group(1) ,result.group(2)
@@ -16,13 +16,13 @@ with open("contours_1_0625.csv") as f:
         print(x,y)
 points = np.array([x_li,y_li],dtype=np.int32).T
 ## save contours to csv 
-points_1 = np.around(points,decimals=2)
-np.savetxt('points_0625.csv',points_1,delimiter=',')
+points_1 = np.around(points,decimals=0)
+np.savetxt('points_0627.csv',points_1,delimiter=',')
 draw = np.zeros([512, 512], dtype=np.uint8)
 ## save contours_site to csv
-contours_site = cv.drawContours(draw, [points], -1, (255, 255, 255), thickness=2)
+contours_site = cv.drawContours(draw, [points], -1, (255, 255, 255), thickness=1)
 contours_site_1 = np.around(contours_site,decimals=2)
-np.savetxt('contours_site_1_0625.csv',contours_site_1,delimiter=',')
+np.savetxt('contours_site_1_0627.csv',contours_site_1,delimiter=',',fmt='%d')
 
 # Display the image
 plt.imshow(draw, cmap='gray')
@@ -50,7 +50,8 @@ for i in range(len(grad_x)):
     grad.append(result)
     print(grad)
 
-
+plt.plot(grad)
+plt.show
 
 # ###### 麻煩的方法
 # contours = pd.read_csv("contours_1.csv", header=None, delimiter=",", usecols=[0], names=['X'])

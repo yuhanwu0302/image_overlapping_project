@@ -4,7 +4,7 @@ import numpy as np
 
 x_li=[]
 y_li=[]
-with open('contours_1_0625.csv') as f :
+with open(r'C:\Users\baba\Desktop\image_processing_opencv\contours\contours_2_0627.csv') as f :
     for row in f.readlines():
         print(row)
         result = re.search(r"(\d*)\s(\d*)",row)
