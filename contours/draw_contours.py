@@ -7,7 +7,7 @@ import re
 
 x_li=[]
 y_li=[]
-with open(r"C:\Users\baba\Desktop\image_processing_opencv\contours\contours_2_0627.csv") as f:
+with open(r"C:\Users\Lab_205\Desktop\image_processing_opencv\contours\contours_1_0625.csv") as f:
     for row in f.readlines():
         result = re.search(r"(\d+)\s+(\d+)",row)
         x,y = result.group(1) ,result.group(2)
@@ -15,26 +15,27 @@ with open(r"C:\Users\baba\Desktop\image_processing_opencv\contours\contours_2_06
         y_li.append(y)
         print(x,y)
 points = np.array([x_li,y_li],dtype=np.int32).T
-## save contours to csv 
+####### save contours to csv 
 points_1 = np.around(points,decimals=0)
-np.savetxt('points_0627.csv',points_1,delimiter=',')
+# np.savetxt('points_0627.csv',points_1,delimiter=',')
 draw = np.zeros([512, 512], dtype=np.uint8)
-## save contours_site to csv
+####### save contours_site to csv
 contours_site = cv.drawContours(draw, [points], -1, (255, 255, 255), thickness=1)
 contours_site_1 = np.around(contours_site,decimals=2)
-np.savetxt('contours_site_1_0627.csv',contours_site_1,delimiter=',',fmt='%d')
+# np.savetxt('contours_site_1_0627.csv',contours_site_1,delimiter=',',fmt='%d')
 
-# Display the image
+####### Display the image
 plt.imshow(draw, cmap='gray')
 plt.show()
+
 
 
 #### calculate the gradient
 grad_x =[]
 grad_y =[]
-for i in range(1,len(x_li)):
-    diff_x = int(x_li[i]) - int(x_li[i-1])
-    diff_y = int(y_li[i]) - int(y_li[i-1])
+for i in np.linspace(10,770,77,dtype='int'):
+    diff_x = int(x_li[i]) - int(x_li[i-10])
+    diff_y = int(y_li[i]) - int(y_li[i-10])
     print(diff_x,diff_y)
     grad_x.append(diff_x)
     grad_y.append(diff_y)
