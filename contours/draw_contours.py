@@ -1,13 +1,12 @@
 import cv2 as cv
 import numpy as np
-import pandas as pd
 import os
 import matplotlib.pyplot as plt
 import re
 
 x_li=[]
 y_li=[]
-with open(r"C:\Users\Lab_205\Desktop\image_processing_opencv\contours\contours_1_0625.csv") as f:
+with open(r"C:\Users\baba\Desktop\image_processing_opencv\contours\contours_2_0627.csv") as f:
     for row in f.readlines():
         result = re.search(r"(\d+)\s+(\d+)",row)
         x,y = result.group(1) ,result.group(2)
@@ -28,12 +27,10 @@ contours_site_1 = np.around(contours_site,decimals=2)
 plt.imshow(draw, cmap='gray')
 plt.show()
 
-
-
 #### calculate the gradient
 grad_x =[]
 grad_y =[]
-for i in np.linspace(10,770,77,dtype='int'):
+for i in np.linspace(10,676,67,dtype='int'):
     diff_x = int(x_li[i]) - int(x_li[i-10])
     diff_y = int(y_li[i]) - int(y_li[i-10])
     print(diff_x,diff_y)
@@ -54,7 +51,11 @@ for i in range(len(grad_x)):
 plt.plot(grad)
 plt.show
 
+
+
+
 # ###### 麻煩的方法
+#import pandas as pd
 # contours = pd.read_csv("contours_1.csv", header=None, delimiter=",", usecols=[0], names=['X'])
 # assert contours is not None, "Couldn't read the CSV"
 # contours.insert(1, column="Y", value=0)
