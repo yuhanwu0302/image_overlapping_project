@@ -14,7 +14,7 @@ cv.destroyAllWindows()
 
 _ ,thresh = cv.threshold(gray,20,255,cv.THRESH_TOZERO)
 contours,hierarchy=cv.findContours(thresh,cv.RETR_TREE,cv.CHAIN_APPROX_NONE)
-cv.drawContours(img,contours,-1,(0,0,255),3)
+cv.drawContours(img,contours,-1,(0,0,255),1)
 cv.imshow("idk",img)
 cv.waitKey(0)
 cv.destroyAllWindows()

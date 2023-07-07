@@ -1,3 +1,8 @@
+import numpy as np
+import os
+import matplotlib.pyplot as plt
+import re
+
 def slidingwindow(k,arr,w=1):
     start = 0
     total = 0.0
@@ -15,13 +20,36 @@ def slidingwindow(k,arr,w=1):
             start += w
             if start >= len(arr):  
                 break
-    return list(map(int,result))
+    return list(map(int,result)) , len(list(map(int,result)))
 
-import numpy as np
-import os
-import matplotlib.pyplot as plt
-import re
 
+#### calculate the gradient
+def gradient(x,y,interval):
+    grad_x =[]
+    grad_y =[]
+    assert  len(x) == len(y) , "The lengths of the lists x and y are not the same."
+    for i in np.linspace(interval,len(x)-1,int(len(x)/interval),dtype='int'):
+        diff_x = int(x[i]) - int(x[i-interval])
+        diff_y = int(y[i]) - int(y[i-interval])
+        print(diff_x,diff_y)
+        grad_x.append(diff_x)
+        grad_y.append(diff_y)
+    grad_x
+    grad_y
+
+    grad = []
+    for i in range(len(grad_x)):
+        if int(grad_y[i]) == 0:
+            result = 0
+        else:   
+            result = int(grad_x[i])/int(grad_y[i])
+        grad.append(result)
+        print(grad)
+
+    plt.plot(grad)
+    plt.show
+    
+###### read contours 
 x_li=[]
 y_li=[]
 with open(r"C:\Users\baba\Desktop\image_processing_opencv\contours\contours_2_0627.csv") as f:
@@ -34,39 +62,6 @@ with open(r"C:\Users\baba\Desktop\image_processing_opencv\contours\contours_2_06
 x_li = list(map(int,x_li))
 y_li = list(map(int,y_li))
 
-sliding_x = slidingwindow(10,x_li,1)
-sliding_y = slidingwindow(10,y_li,1)
-len(sliding_x)
-#### calculate the gradient
-
-
-
-############## 要再將 gradient 寫成function !!!
-
-
-
-grad_x =[]
-grad_y =[]
-
-for i in np.linspace(10,len(sliding_x)-1,66,dtype='int'):
-    diff_x = int(sliding_x[i]) - int(sliding_x[i-10])
-    diff_y = int(sliding_y[i]) - int(sliding_y[i-10])
-    print(diff_x,diff_y)
-    grad_x.append(diff_x)
-    grad_y.append(diff_y)
-grad_x
-grad_y
-
-grad = []
-for i in range(len(grad_x)):
-    if int(grad_y[i]) == 0:
-        result = 0
-    else:   
-        result = int(grad_x[i])/int(grad_y[i])
-    grad.append(result)
-    print(grad)
-
-plt.plot(grad)
-plt.show
-
-
+sliding_x , x_num = slidingwindow(10,x_li,2)
+sliding_y , y_num = slidingwindow(10,y_li,2)
+gradient(sliding_x,sliding_y,10)
