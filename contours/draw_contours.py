@@ -3,29 +3,17 @@ import numpy as np
 import os
 import matplotlib.pyplot as plt
 import re
+def readcontours(file):
+    x_li=[]
+    y_li=[]
+    with open(file,'r') as f:
+        for row in f.readlines():
+            result = re.search(r"(\d+)\s+(\d+)",row)
+            x,y = result.group(1) ,result.group(2)
+            x_li.append(x)
+            y_li.append(y)
+    return list(map(int,x_li)),list(map(int,y_li))
 
-x_li=[]
-y_li=[]
-with open(r"C:\Users\baba\Desktop\image_processing_opencv\contours\contours_2_0627.csv") as f:
-    for row in f.readlines():
-        result = re.search(r"(\d+)\s+(\d+)",row)
-        x,y = result.group(1) ,result.group(2)
-        x_li.append(x)
-        y_li.append(y)
-        print(x,y)
-points = np.array([x_li,y_li],dtype=np.int32).T
-####### save contours to csv 
-points_1 = np.around(points,decimals=0)
-# np.savetxt('points_0627.csv',points_1,delimiter=',')
-####### save contours_site to csv
-draw = np.zeros([512, 512], dtype=np.uint8)
-contours_site = cv.drawContours(draw, [points], -1, (255, 255, 255), thickness=1)
-contours_site_1 = np.around(contours_site,decimals=2)
-#np.savetxt('contours_site_1_0627.csv',contours_site_1,delimiter=',',fmt='%d')
-
-####### Display the image
-plt.imshow(draw, cmap='gray')
-plt.show()
 
 #### calculate the gradient
 def gradient(x,y,interval):
@@ -53,31 +41,21 @@ def gradient(x,y,interval):
     plt.plot(grad)
     plt.show
 
+
+x_li , y_li = readcontours(r"C:/Users/baba/Desktop/image_processing_opencv/contours/contours_2_0627.csv")
 gradient(x_li,y_li,10)
 
-# ###### 麻煩的方法
-#import pandas as pd
-# contours = pd.read_csv("contours_1.csv", header=None, delimiter=",", usecols=[0], names=['X'])
-# assert contours is not None, "Couldn't read the CSV"
-# contours.insert(1, column="Y", value=0)
-# contours["X"], contours["Y"] = contours['X'].str.split(" ", 1).str
-# contours['X'] = contours['X'].str.replace(r'\[|\]', '', regex=True)
-# contours['Y'] = contours['Y'].str.replace(r'\[|\]', '', regex=True)
 
-# x = []
-# y = []
-# for index, row in contours.iterrows():
-#     if row['X'] and row['Y']:
-#         x.append(float(row['X']))
-#         y.append(float(row['Y']))
-
+# ####### Display the image in excel or jupyter 
+# points = np.array([x_li,y_li],dtype=np.int32).T
+# ####### save contours to csv 
+# points_1 = np.around(points,decimals=0)
+# # np.savetxt('points_0627.csv',points_1,delimiter=',')
+# ####### save contours_site to csv
 # draw = np.zeros([512, 512], dtype=np.uint8)
-# contour_points = np.array([x, y], dtype=np.int32).T
-# cv.drawContours(draw, [contour_points], -1, (255, 255, 255), thickness=2)
+# contours_site = cv.drawContours(draw, [points], -1, (255, 255, 255), thickness=1)
+# contours_site_1 = np.around(contours_site,decimals=2)
+# #np.savetxt('contours_site_1_0627.csv',contours_site_1,delimiter=',',fmt='%d')
 
-# contour_points
-# # Display the image
 # plt.imshow(draw, cmap='gray')
 # plt.show()
-
-
