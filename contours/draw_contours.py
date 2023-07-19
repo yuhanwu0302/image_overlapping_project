@@ -23,12 +23,9 @@ def gradient(x,y,interval):
     for i in np.linspace(interval,len(x)-1,int(len(x)/interval),dtype='int'):
         diff_x = int(x[i]) - int(x[i-interval])
         diff_y = int(y[i]) - int(y[i-interval])
-        print(diff_x,diff_y)
         grad_x.append(diff_x)
         grad_y.append(diff_y)
-    grad_x
-    grad_y
-
+    
     grad = []
     for i in range(len(grad_x)):
         if int(grad_y[i]) == 0:
@@ -36,14 +33,14 @@ def gradient(x,y,interval):
         else:   
             result = int(grad_x[i])/int(grad_y[i])
         grad.append(result)
-        print(grad)
-
+    
     plt.plot(grad)
     plt.show
 
 
-x_li , y_li = readcontours(r"C:/Users/baba/Desktop/image_processing_opencv/contours/contours_2_0627.csv")
-gradient(x_li,y_li,10)
+x_li , y_li = readcontours(r"C:\Users\baba\Desktop\image_processing_opencv\tan\leaf_0017.csv")
+gradient(x_li,y_li,5)
+
 
 
 # ####### Display the image in excel or jupyter 
