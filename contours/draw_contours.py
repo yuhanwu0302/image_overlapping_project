@@ -38,21 +38,14 @@ def gradient(x,y,interval):
     plt.show
 
 
-x_li , y_li = readcontours(r"C:\Users\baba\Desktop\image_processing_opencv\tan\leaf_0017.csv")
+x_li , y_li = readcontours(r"C:\Users\baba\Desktop\image_processing_opencv\findcontours\overlap2.csv")
 gradient(x_li,y_li,5)
 
 
 
-# ####### Display the image in excel or jupyter 
-# points = np.array([x_li,y_li],dtype=np.int32).T
-# ####### save contours to csv 
-# points_1 = np.around(points,decimals=0)
-# # np.savetxt('points_0627.csv',points_1,delimiter=',')
-# ####### save contours_site to csv
-# draw = np.zeros([512, 512], dtype=np.uint8)
-# contours_site = cv.drawContours(draw, [points], -1, (255, 255, 255), thickness=1)
-# contours_site_1 = np.around(contours_site,decimals=2)
-# #np.savetxt('contours_site_1_0627.csv',contours_site_1,delimiter=',',fmt='%d')
-
-# plt.imshow(draw, cmap='gray')
-# plt.show()
+####### Display the image 
+points = np.array([x_li,y_li],dtype=np.int32).T
+draw = np.zeros([512, 512], dtype=np.uint8)
+contours_site = cv.drawContours(draw, [points], -1, (255, 255, 255), thickness=1)
+plt.imshow(draw, cmap='gray')
+plt.show()

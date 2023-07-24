@@ -37,4 +37,4 @@ def findcontours(path):
                 f.writelines([f"{pixel}," for pixel in layer_2])
                 f.writelines("\n")
 
-findcontours(r"C:\Users\baba\Desktop\image_processing_opencv\Gauva (P3)\healthy\clear\0004_0037_clear.jpg")
+findcontours(r"C:\Users\baba\Desktop\image_processing_opencv\overlap\overlap2.jpg")
