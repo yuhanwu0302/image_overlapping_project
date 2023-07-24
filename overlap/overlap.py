@@ -1,8 +1,7 @@
-
 import numpy as np
 import cv2 as cv
 from matplotlib import pyplot as plt
-img = cv.imread('overlap2.jpg')
+img = cv.imread('touch.jpg')
 gray = cv.cvtColor(img,cv.COLOR_BGR2GRAY)
 ret, thresh = cv.threshold(gray,0,255,cv.THRESH_BINARY+cv.THRESH_OTSU)
 # noise removal
@@ -23,7 +22,20 @@ markers = markers+1
 # Now, mark the region of unknown with zero
 markers[unknown==255] = 0
 markers = cv.watershed(img,markers)
-img[markers == -1] = [255,0,0]
-cv.imshow('img',img)
+
+
+leaf1_edges = np.zeros_like(img)
+leaf2_edges = np.zeros_like(img)
+
+leaf1_edges[markers == 2] = 255
+leaf2_edges[markers == 3] = 255
+
+cv.imshow('touch1',img)
+cv.imshow('Leaf1 Edges', leaf1_edges)
+cv.imshow('Leaf2 Edges', leaf2_edges)
 cv.waitKey(0)
 cv.destroyAllWindows()
+
+#  write each leaf
+# cv.imwrite('leaf1_edges.jpg',leaf1_edges)
+# cv.imwrite('leaf2_edges.jpg',leaf2_edges)

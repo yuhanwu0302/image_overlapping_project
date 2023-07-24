@@ -38,7 +38,7 @@ def gradient(x,y,interval):
     plt.show
 
 
-x_li , y_li = readcontours(r"C:\Users\baba\Desktop\image_processing_opencv\findcontours\overlap2.csv")
+x_li , y_li = readcontours(r"C:\Users\Lab_205\Desktop\image_processing_opencv\overlap\leaf1_edges.csv")
 gradient(x_li,y_li,5)
 
 
