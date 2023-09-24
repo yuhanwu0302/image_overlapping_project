@@ -16,7 +16,7 @@ def readcontours(file):
 
 
 #### calculate the gradient
-def gradient(x,y,interval):
+def gradient(x,y,interval,output_name):
     grad_x =[]
     grad_y =[]
     assert  len(x) == len(y) , "The lengths of the lists x and y are not the same."
@@ -35,17 +35,46 @@ def gradient(x,y,interval):
         grad.append(result)
     
     plt.plot(grad)
-    plt.show
-
-
-x_li , y_li = readcontours(r"C:\Users\Lab_205\Desktop\image_processing_opencv\overlap\leaf1_edges.csv")
-gradient(x_li,y_li,5)
+    plt.savefig(output_name)
+    plt.close()
 
 
 
-####### Display the image 
-points = np.array([x_li,y_li],dtype=np.int32).T
-draw = np.zeros([512, 512], dtype=np.uint8)
-contours_site = cv.drawContours(draw, [points], -1, (255, 255, 255), thickness=1)
-plt.imshow(draw, cmap='gray')
-plt.show()
+
+def get_all_file_paths(targetdir):
+    file_paths = []
+
+    # os.walk()返回三個值：目錄的路徑、目錄中的子目錄名稱、目錄中的檔案名稱
+    for dirpath, _, filenames in os.walk(targetdir):
+        for file in filenames:
+            full_path = os.path.join(dirpath, file)
+            file_paths.append(full_path)
+
+    return file_paths
+
+
+
+targetdir = r'C:\Users\Lab_205\Desktop\image_processing_opencv\plant leaf\Flavia dataset\csvfiles'
+all_files = get_all_file_paths(targetdir)
+output_dir = r'C:\Users\Lab_205\Desktop\image_processing_opencv\plant leaf\Flavia dataset\plot_15'
+if not os.path.exists(output_dir):
+    os.makedirs(output_dir) 
+
+for csvfile in all_files:
+    x_li , y_li = readcontours(csvfile)
+    base_name = os.path.basename(csvfile)
+    plotname, _ = os.path.splitext(base_name)
+    output_image_name = os.path.join(output_dir, f"{plotname}.jpg")
+    gradient(x_li,y_li,15,output_image_name)
+
+
+
+
+
+
+# ####### Display the image 
+# points = np.array([x_li,y_li],dtype=np.int32).T
+# draw = np.zeros([512, 512], dtype=np.uint8)
+# contours_site = cv.drawContours(draw, [points], -1, (255, 255, 255), thickness=1)
+# plt.imshow(draw, cmap='gray')
+# plt.show()

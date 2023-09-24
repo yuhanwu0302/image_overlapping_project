@@ -3,7 +3,7 @@ import numpy as np
 import os
 import glob
 import re
-folder = r"C:\Users\Lab_205\Desktop\Gauva (P3)\healthy"
+folder = r"C:\Users\Lab_205\Desktop\image_processing_opencv\plant leaf\Flavia dataset"
 
 def create_savename(file, save_folder):
     basename = os.path.basename(file)
@@ -14,17 +14,19 @@ def create_savename(file, save_folder):
 
 def remove_background (file, save_folder):
     filename = file
+    if file is None:
+        print(f"Failed to load image: {filename}")
+        return
     file = cv.imread(file)
     file = cv.resize(file,(512,512))
     gray = cv.cvtColor(file,cv.COLOR_BGR2GRAY)
     blur =cv.GaussianBlur(gray,(5,5),0)
-    _, thresh = cv.threshold(blur, 0, 255, cv.THRESH_BINARY+cv.THRESH_OTSU)
+    _, thresh = cv.threshold(blur, 0, 255, cv.THRESH_BINARY_INV+cv.THRESH_OTSU)
     kernel = cv.getStructuringElement(cv.MORPH_ELLIPSE, (5, 5))
     mask = cv.morphologyEx(thresh, cv.MORPH_OPEN, kernel)
-    fg = cv.bitwise_and(file, file, mask=mask)
     savename = create_savename(filename, save_folder)
     print(savename)
-    cv.imwrite(savename,fg)
+    cv.imwrite(savename,mask)
 
 def grab_files(folder):
     files = glob.glob(os.path.join(folder, "*.jpg"))
