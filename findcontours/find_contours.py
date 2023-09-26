@@ -14,25 +14,13 @@ def set_starting_point_to_leftmost(contour):
     return reordered_contour
 
 
-def findcontours(path):
-## read image
+def findcontours(path,output_dir='.'):
     filename = os.path.basename(path)
     filename,_ = os.path.splitext(filename)
 
     img = cv.imread(path)
     img = cv.resize(img,(512,512))
-
-# cv.imshow("clear",img)
-# cv.waitKey(0)
-# cv.destroyAllWindows()
-
-
-# convert to gray
     gray = cv.cvtColor(img,cv.COLOR_BGR2GRAY)
-# cv.imshow("gray",gray)
-# cv.waitKey(0)
-# cv.destroyAllWindows()
-
     _ ,thresh = cv.threshold(gray,0,255,cv.THRESH_TOZERO+cv.THRESH_OTSU)
     contours,hierarchy=cv.findContours(thresh,cv.RETR_EXTERNAL,cv.CHAIN_APPROX_NONE)
     reordered_contours = [set_starting_point_to_leftmost(contour) for contour in contours]
@@ -41,9 +29,6 @@ def findcontours(path):
 # cv.imshow("con",con)
 # cv.waitKey(0)
 # cv.destroyAllWindows()
-
-
-    output_dir = r'C:\Users\Lab_205\Desktop\image_processing_opencv\plant leaf\Flavia dataset\csvfiles'
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
@@ -58,17 +43,12 @@ def findcontours(path):
 
 def get_all_file_paths(targetdir):
     file_paths = []
-
-    # os.walk()返回三個值：目錄的路徑、目錄中的子目錄名稱、目錄中的檔案名稱
     for dirpath, _, filenames in os.walk(targetdir):
         for file in filenames:
             full_path = os.path.join(dirpath, file)
             file_paths.append(full_path)
 
     return file_paths
-
-
-
 
 
 

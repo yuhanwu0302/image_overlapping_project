@@ -54,18 +54,21 @@ def get_all_file_paths(targetdir):
 
 
 
+
+
 targetdir = r'C:\Users\Lab_205\Desktop\image_processing_opencv\plant leaf\Flavia dataset\csvfiles'
 all_files = get_all_file_paths(targetdir)
-output_dir = r'C:\Users\Lab_205\Desktop\image_processing_opencv\plant leaf\Flavia dataset\plot_15'
+output_dir = r'C:\Users\Lab_205\Desktop\image_processing_opencv\plant leaf\Flavia dataset\plot_20'
 if not os.path.exists(output_dir):
     os.makedirs(output_dir) 
+
 
 for csvfile in all_files:
     x_li , y_li = readcontours(csvfile)
     base_name = os.path.basename(csvfile)
     plotname, _ = os.path.splitext(base_name)
     output_image_name = os.path.join(output_dir, f"{plotname}.jpg")
-    gradient(x_li,y_li,15,output_image_name)
+    gradient(x_li,y_li,20,output_image_name)
 
 
 
