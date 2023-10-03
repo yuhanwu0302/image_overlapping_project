@@ -1,8 +1,16 @@
-import cv2 as cv
-import numpy as np
 import os
-import matplotlib.pyplot as plt
 import re
+from typing import List, Type
+
+
+
+
+
+import cv2 as cv
+import matplotlib.pyplot as plt
+import numpy as np
+
+
 def readcontours(file):
     x_li=[]
     y_li=[]
@@ -25,20 +33,56 @@ def gradient(x,y,interval,output_name):
         diff_y = int(y[i]) - int(y[i-interval])
         grad_x.append(diff_x)
         grad_y.append(diff_y)
-    
+
     grad = []
     for i in range(len(grad_x)):
         if int(grad_y[i]) == 0:
             result = 0
-        else:   
+        else:
             result = int(grad_x[i])/int(grad_y[i])
         grad.append(result)
-    
+
     plt.plot(grad)
     plt.savefig(output_name)
     plt.close()
 
 
+class Point():
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+
+    def __repr__(self):
+        return f"({self.x},{self.y})"
+
+    def __eq__(self, other):
+        return self.x == other.x and self.y == other.y
+
+    def __ne__(self, other):
+        return self.x != other.x or self.y != other.y
+
+    def __add__(self, other):
+        return Point(self.x + other.x, self.y + other.y)
+
+    def __sub__(self, other):
+        return Point(self.x - other.x, self.y - other.y)
+
+
+class Gradient():
+    GRAD_MAX = 20  # the maximum gradient value
+    def __init__(self, points: List[Point]):
+        self.points = points
+        # self.calc_gradient()
+
+    def calc_gradient(self):
+        for i, p in enumerate(self.points):
+            diff_x = None  # TODO: calculation
+            if diff_x == 0:
+                result = Gradient.GRAD_MAX
+            else:
+                diff_y = None  # TODO: calculation
+                result = diff_y / diff_x
+            self.grad.append(result)
 
 
 def get_all_file_paths(targetdir):
@@ -60,7 +104,7 @@ targetdir = r'C:\Users\Lab_205\Desktop\image_processing_opencv\plant leaf\Flavia
 all_files = get_all_file_paths(targetdir)
 output_dir = r'C:\Users\Lab_205\Desktop\image_processing_opencv\plant leaf\Flavia dataset\plot_20'
 if not os.path.exists(output_dir):
-    os.makedirs(output_dir) 
+    os.makedirs(output_dir)
 
 
 for csvfile in all_files:
@@ -75,7 +119,7 @@ for csvfile in all_files:
 
 
 
-# ####### Display the image 
+# ####### Display the image
 # points = np.array([x_li,y_li],dtype=np.int32).T
 # draw = np.zeros([512, 512], dtype=np.uint8)
 # contours_site = cv.drawContours(draw, [points], -1, (255, 255, 255), thickness=1)
