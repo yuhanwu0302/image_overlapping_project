@@ -37,7 +37,7 @@ def gradient(x,y,interval,output_name):
     plt.plot(grad)
     plt.savefig(output_name)
     plt.close()
-
+    return grad
 
 
 
@@ -56,9 +56,9 @@ def get_all_file_paths(targetdir):
 
 
 
-targetdir = r'C:\Users\Lab_205\Desktop\image_processing_opencv\plant leaf\Flavia dataset\csvfiles'
+targetdir = r'C:\Users\Lab_205\Desktop\image_processing_opencv\dataset_output\find_pattern\18_deodar\contourfiles'
 all_files = get_all_file_paths(targetdir)
-output_dir = r'C:\Users\Lab_205\Desktop\image_processing_opencv\plant leaf\Flavia dataset\plot_20'
+output_dir = r'C:\Users\Lab_205\Desktop\image_processing_opencv\dataset_output\find_pattern\18_deodar\gradientplot_15'
 if not os.path.exists(output_dir):
     os.makedirs(output_dir) 
 
@@ -67,17 +67,20 @@ for csvfile in all_files:
     x_li , y_li = readcontours(csvfile)
     base_name = os.path.basename(csvfile)
     plotname, _ = os.path.splitext(base_name)
-    output_image_name = os.path.join(output_dir, f"{plotname}.jpg")
-    gradient(x_li,y_li,20,output_image_name)
+    output_image_name = os.path.join(output_dir, f"{plotname}_15.jpg")
+    gradient(x_li,y_li,15,output_image_name)
 
 
-
-
+x_li , y_li = readcontours(r'C:\Users\Lab_205\Desktop\image_processing_opencv\dataset_output\find_pattern\2_Chinese horse chestnut\1060_clear_overlape.csv')
+output_image_name='1060_clear_touch'
+gradient(x_li,y_li,15,output_image_name)
 
 
 # ####### Display the image 
-# points = np.array([x_li,y_li],dtype=np.int32).T
-# draw = np.zeros([512, 512], dtype=np.uint8)
-# contours_site = cv.drawContours(draw, [points], -1, (255, 255, 255), thickness=1)
-# plt.imshow(draw, cmap='gray')
-# plt.show()
+points = np.array([x_li,y_li],dtype=np.int32).T
+draw = np.zeros([512, 512], dtype=np.uint8)
+contours_site = cv.drawContours(draw, [points], -1, (255, 255, 255), thickness=1)
+plt.imshow(draw, cmap='gray')
+plt.show()
+
+

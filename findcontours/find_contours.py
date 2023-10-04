@@ -52,8 +52,7 @@ def get_all_file_paths(targetdir):
 
 
 
-targetdir = r'C:\Users\Lab_205\Desktop\image_processing_opencv\plant leaf\Flavia dataset\clear'
+targetdir = r'C:\Users\Lab_205\Desktop\image_processing_opencv\dataset_output\find_pattern\18_deodar'
 all_files = get_all_file_paths(targetdir)
-
 for file_path in all_files:
-    findcontours(file_path)
+    findcontours(file_path,r'C:\Users\Lab_205\Desktop\image_processing_opencv\dataset_output\find_pattern\18_deodar\contourfiles')
