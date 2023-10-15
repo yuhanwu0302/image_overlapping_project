@@ -63,7 +63,7 @@ def gradient(x, y, interval, output_name):
     plt.plot(grad)
     plt.savefig(output_name)
     plt.close()
-
+    return grad
 
 def get_all_file_paths(targetdir):
     file_paths = []
