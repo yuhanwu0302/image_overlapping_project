@@ -44,7 +44,7 @@ class Gradient():
         self.points = points
         self.interval = interval
         self.grad = []  # Added to store gradient values
-        self.calc_gradient()
+        
 
     def calc_gradient(self):
         for i in range(self.interval, len(self.points)):
