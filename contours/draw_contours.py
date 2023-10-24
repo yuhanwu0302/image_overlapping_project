@@ -50,8 +50,8 @@ def output_gradvalue(gradlist: List[float],output_image_name: str,output_csv_nam
 
 
 def main():
-    targetdir = r'C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\find_pattern\2_Chinese horse chestnut\contourfiles'
-    output_dir = r'C:\Users\Lab_205\Desktop\testoutput'
+    targetdir = r'C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\find_pattern\7_Nanmu\contourfiles'
+    output_dir = r'C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\find_pattern\7_Nanmu\plot_5'
     
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
@@ -60,7 +60,7 @@ def main():
     
     for csvfile in all_files:
         points = read_contours(csvfile)
-        gradients = calculate_gradients(points, interval=1, move=1)
+        gradients = calculate_gradients(points, interval=5, move=1)
 
         base_name = os.path.basename(csvfile)
         plotname, _ = os.path.splitext(base_name)
