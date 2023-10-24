@@ -29,9 +29,6 @@ def plot_gradients(gradients: List[Gradient]):
     plt.ylabel('Gradient Value')
     plt.show()
 
-p = read_contours(r"C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\find_pattern\2_Chinese horse chestnut\contourfiles\1060_clear.csv")
-pgd = calculate_gradients(p,10,1)
-plot_gradients(pgd)
 def get_all_file_paths(directory):
     file_paths = []
     for filename in os.listdir(directory):
