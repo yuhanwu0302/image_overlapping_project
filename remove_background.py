@@ -3,7 +3,7 @@ import numpy as np
 import os
 import glob
 import re
-folder = r"C:\Users\Lab_205\Desktop\image_processing_opencv\plant leaf\Flavia dataset"
+folder = r"C:\Users\Lab_205\Desktop\image_overlapping_project\plant leaf_01\dataset_output\find_pattern\18_deodar\raw"
 
 def create_savename(file, save_folder):
     basename = os.path.basename(file)
@@ -20,7 +20,7 @@ def remove_background (file, save_folder):
     file = cv.imread(file)
     file = cv.resize(file,(512,512))
     gray = cv.cvtColor(file,cv.COLOR_BGR2GRAY)
-    blur =cv.GaussianBlur(gray,(5,5),0)
+    blur =cv.GaussianBlur(gray,(55,55),0)
     _, thresh = cv.threshold(blur, 0, 255, cv.THRESH_BINARY_INV+cv.THRESH_OTSU)
     kernel = cv.getStructuringElement(cv.MORPH_ELLIPSE, (5, 5))
     mask = cv.morphologyEx(thresh, cv.MORPH_OPEN, kernel)

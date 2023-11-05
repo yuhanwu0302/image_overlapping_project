@@ -5,6 +5,8 @@ import numpy as np
 import pandas as pd
 from point import Point , Gradient
 from typing import List
+import sys
+sys.path.append('/path/to/image_overlapping_project/')
 
 def read_contours(file):
     all_points = []
@@ -18,7 +20,8 @@ def read_contours(file):
     return all_points
 
 def calculate_gradients(points: List[Point], interval: int = 1, move: int = 1) -> List[Gradient]:
-    gradients = [Gradient(points[i], points[i - interval]) for i in range(interval, len(points), move)]
+    n = len(points)
+    gradients = [Gradient(points[i], points[(i + interval) % n ]) for i in range(0, n, move)]
     return gradients    
 
 def plot_gradients(gradients: List[Gradient]):
@@ -50,8 +53,8 @@ def output_gradvalue(gradlist: List[float],output_image_name: str,output_csv_nam
 
 
 def main():
-    targetdir = r'C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\find_pattern\7_Nanmu\contourfiles'
-    output_dir = r'C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\find_pattern\7_Nanmu\plot_5'
+    targetdir = r'C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\find_pattern\18_deodar\contourfiles01'
+    output_dir = r'C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\find_pattern\18_deodar\contourfiles01\plot_20'
     
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
@@ -60,7 +63,7 @@ def main():
     
     for csvfile in all_files:
         points = read_contours(csvfile)
-        gradients = calculate_gradients(points, interval=5, move=1)
+        gradients = calculate_gradients(points, interval=20, move=1)
 
         base_name = os.path.basename(csvfile)
         plotname, _ = os.path.splitext(base_name)
@@ -74,3 +77,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+

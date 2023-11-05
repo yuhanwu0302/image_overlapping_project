@@ -3,6 +3,7 @@ import re
 import matplotlib.pyplot as plt
 from point import Point, Gradient
 from typing import List
+from draw_contours import calculate_gradients
 
 def read_contours(file):
     all_points = []
@@ -15,27 +16,28 @@ def read_contours(file):
                 all_points.append(p)
     return all_points
 
-def calculate_gradients(points: List[Point], interval: int = 1, move: int = 1) -> List[Gradient]:
-    gradients = [Gradient(points[i], points[i - interval]) for i in range(interval, len(points), move)]
-    return gradients
-
-def plot_contours_and_gradients(points: List[Point], gradients: List[Gradient], interval: int, move: int, start_percent: float = 0, end_percent: float = 25, image_size: int = 512):
+def plot_mark_contours(points: List[Point], gradients: List[Gradient], interval: int, move: int, start_percent: float = 0, end_percent: float = 25, image_size: int = 512):
     x = [point.x for point in points]
     y = [point.y for point in points]
     plt.figure()
     plt.plot(x, y, label='Contour')
 
-    start_index = int(len(points) * (start_percent / 100))
-    end_index = int(len(points) * (end_percent / 100))
+    num_gradients = len(gradients)
+    start_gradient_index = int(num_gradients * (start_percent / 100))
+    end_gradient_index = int(num_gradients * (end_percent / 100))
     
-    for i in range(start_index, end_index, move):
-        if i + interval < len(points):
-            plt.plot([points[i].x, points[i + interval].x], [points[i].y, points[i + interval].y], 'r-')
+    start_point_index = start_gradient_index * move
+    end_point_index = (end_gradient_index * move + interval) % len(points)
+
+    for i in range(start_point_index, end_point_index, move):
+        plt.plot([points[i].x, points[(i + interval) % len(points)].x], [points[i].y, points[(i + interval) % len(points)].y], 'r-')
 
     plt.xlim(0, image_size)
     plt.ylim(0, image_size)
     plt.legend()
     plt.show()
+
+
 
 
 def plot_gradients(gradients: List[Gradient], interval: int, move: int, start_percent: float = 0, end_percent: float = 25):
@@ -54,7 +56,7 @@ def plot_gradients(gradients: List[Gradient], interval: int, move: int, start_pe
 
     plt.xlabel('Point Index')
     plt.ylabel('Gradient Value')
-    plt.legend()
+    plt.legend()    
     plt.show()
 
 
@@ -62,11 +64,11 @@ def plot_gradients(gradients: List[Gradient], interval: int, move: int, start_pe
 def main():
     filepath = r'C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\find_pattern\2_Chinese horse chestnut\contourfiles\1069_clear.csv'
     interval = 10
-    move = 5
+    move = 1
     points = read_contours(filepath)
     gradients = calculate_gradients(points, interval, move)
-    plot_contours_and_gradients(points, gradients, interval, move,0,3)
-    plot_gradients(gradients, interval, move,0,3)
+    plot_mark_contours(points, gradients, interval, move,40,80)
+    plot_gradients(gradients, interval, move,40,80)
 
 if __name__ == "__main__":
     main()
