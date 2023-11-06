@@ -2,17 +2,31 @@ import numpy as np
 import glob
 from scipy.interpolate import interp1d
 from draw_contours import read_contours
+import point
 import cv2 as cv
 import matplotlib.pyplot as plt
 
-def findCOM(contourfile):
-    points = read_contours(contourfile)
-    contour_points = [(point.x, point.y) for point in points]
-    contour_array = np.array(contour_points, dtype=np.float32)
+def findCOM(input_data):
+    # 檢查輸入數據並讀取或轉換為輪廓數組
+    if isinstance(input_data, str):  # 如果輸入是字符串，假設它是文件路徑
+        points = read_contours(input_data)
+        contour_points = [(point.x, point.y) for point in points]
+        contour_array = np.array(contour_points, dtype=np.float32)
+    elif isinstance(input_data, np.ndarray):  # 如果輸入是NumPy數組
+        contour_array = input_data
+    else:
+        raise ValueError("Input must be a file path or a NumPy array.")
+
+    # 計算輪廓的質心
     M = cv.moments(contour_array)
-    cx = int(M['m10']/M['m00']) if M['m00'] != 0 else 0
-    cy = int(M['m01']/M['m00']) if M['m00'] != 0 else 0
-    return (cx, cy)
+    if M['m00'] == 0:
+        return (0, 0)  # 如果 m00 為 0，則返回 (0, 0) 避免除以零
+    cx = M['m10'] / M['m00']
+    cy = M['m01'] / M['m00']
+    return (cx, cy)  # 返回浮點數質心座標
+
+
+
 
 def resample_contour(csv_file_path, target_num_points):
     points = read_contours(csv_file_path)
@@ -42,10 +56,19 @@ def plot_points(contour_points, title="Points"):
     plt.axis('equal')
     plt.show()
 
-def find_leaf_tip(contour_points, centroid):
+def find_leaf_tip(input_data, centroid):
+    if isinstance(input_data, str):  # 如果输入是字符串，假设它是文件路径
+        points = read_contours(input_data)
+        contour_points = [(point.x, point.y) for point in points]
+    elif isinstance(input_data, np.ndarray):  # 如果输入是NumPy数组
+        contour_points = input_data
+    else:
+        raise ValueError("Input must be a file path or a NumPy array.")
+
     distances = [np.linalg.norm(np.array(point) - np.array(centroid)) for point in contour_points]
     tip_index = np.argmax(distances)
     return contour_points[tip_index]
+
 
 def plot_comparison(original_contour, resampled_contour, original_centroid, resampled_centroid, original_tip, resampled_tip):
     plt.figure(figsize=(10, 10))
@@ -76,8 +99,8 @@ def plot_comparison(original_contour, resampled_contour, original_centroid, resa
 #  calculate all files 
 #  csv_files = glob.glob(r'C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\find_pattern\2_Chinese horse chestnut\contourfiles01/*.csv')
 
-##############################   test data    ######################
-csv_files =r"C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\find_pattern\7_Nanmu\contourfiles01\1339_clear.csv"
+#############################   test data    ######################
+csv_files =r"C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\find_pattern\2_Chinese horse chestnut\contourfiles01\1060_clear.csv"
 target_num_points = 100
 resampled_contours = resample_contour(csv_files, target_num_points)
 
@@ -106,3 +129,62 @@ original_tip  =  find_leaf_tip(original_contours,original_M)
 resampled_tip =  find_leaf_tip(resampled_contours,resample_M)
 
 plot_comparison(original_contours,resampled_contours,original_M,resample_M,original_tip,resampled_tip)
+
+
+
+
+
+
+# Procrustes test
+
+from scipy.spatial import procrustes
+
+
+
+file1 = r"C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\find_pattern\2_Chinese horse chestnut\contourfiles01\1060_clear.csv"
+file2 = r"C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\find_pattern\2_Chinese horse chestnut\contourfiles01\1061_clear.csv"
+points1 = read_contours(file1)
+contours1 = np.array([(point.x, point.y) for point in points1], dtype=np.float32)
+
+points2 = read_contours(file2)
+contours2 = np.array([(point.x, point.y) for point in points2], dtype=np.float32)
+
+target_num_points = 100
+resampled_contours1  = resample_contour(file1,target_num_points)
+resampled_contours2  = resample_contour(file2,target_num_points)
+
+
+
+mtx_a, mtx_b, disparity = procrustes(resampled_contours1, resampled_contours2)
+
+
+procrustes_COM_1= findCOM(mtx_a)
+procrustes_COM_2 = findCOM(mtx_b)
+procrustes_tip_1 = find_leaf_tip(mtx_a, procrustes_COM_1)
+procrustes_tip_2 = find_leaf_tip(mtx_b, procrustes_COM_2)
+
+def plot_aligned_contours(contour1, contour2, centroid1, centroid2, tip1, tip2, title='Aligned Contours Comparison'):
+    plt.figure(figsize=(10, 5))
+
+
+    plt.subplot(1, 2, 1)
+    plt.plot(contour1[:, 0], contour1[:, 1], 'r-', label='Contour 1')
+    plt.scatter(centroid1[0], centroid1[1], c='k', marker='o', label='Centroid 1')
+    plt.scatter(tip1[0], tip1[1], c='g', marker='x', label='Tip 1')
+    plt.title('Contour 1')
+    plt.axis('equal')
+
+ 
+    plt.subplot(1, 2, 2)
+    plt.plot(contour2[:, 0], contour2[:, 1], 'b-', label='Contour 2')
+    plt.scatter(centroid2[0], centroid2[1], c='k', marker='o', label='Centroid 2')
+    plt.scatter(tip2[0], tip2[1], c='g', marker='x', label='Tip 2')
+    plt.title('Contour 2')
+    plt.axis('equal')
+
+    plt.suptitle(title)
+    plt.legend()
+    plt.show()
+
+
+plot_aligned_contours(mtx_a, mtx_b, procrustes_COM_1, procrustes_COM_2, procrustes_tip_1, procrustes_tip_2)
