@@ -78,4 +78,11 @@ def main():
 if __name__ == "__main__":
     main()
 
-
+''' original contours not rotated
+points = read_contours(r"C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\find_pattern\2_Chinese horse chestnut\contourfiles01\1070_clear.csv")
+gradients = calculate_gradients(points, interval=20, move=1)
+gradient_values = [gradient.value for gradient in gradients]
+plt.plot(gradient_values)
+plt.xlabel('Point Index')
+plt.ylabel('Gradient Value')
+'''

@@ -1,34 +1,30 @@
 import matplotlib.pyplot as plt
-import re 
-import numpy as np
 
-x_li=[]
-y_li=[]
-with open(r'C:\Users\baba\Desktop\image_processing_opencv\contours\contours_2_0627.csv') as f :
-    for row in f.readlines():
-        print(row)
-        result = re.search(r"(\d*)\s(\d*)",row)
-        x,y = result.group(1) ,result.group(2)
-        x_li.append(x)
-        y_li.append(y)
-        print(x,y)
-
-
-points=[]
-plt.ion()
-for i in range(0,len(x_li)):
-    point=[int((x_li[i])),int(y_li[i])]
-    points.append(point)
-    plt.xlim(0,512)
-    plt.ylim(0,512)
-    plt.scatter(int(x_li[i]),int(y_li[i]))
-    plt.pause(0.0000001)
+def run():
     
-plt.show()
+    plt.ion()
+    fig, ax = plt.subplots()
+    ax.set_xlim(0, 600)
+    ax.set_ylim(0, 800)
+    ax.invert_yaxis()
+    # 定义按键响应函数
+    def on_press(event):
+        if event.key == 'escape':  # 如果按下的是 Esc 键
+            plt.close(fig)  # 关闭图表窗口
 
+    # 将按键事件与处理函数绑定
+    fig.canvas.mpl_connect('key_press_event', on_press)
 
+    # 逐点绘制轮廓
+    for i in range(len(clockwise)):
+        x, y = clockwise[i, 0], clockwise[i, 1]
+        ax.scatter(x, y)
+        plt.pause(0.000001)
+        if not plt.fignum_exists(fig.number):  # 如果图表已关闭，则结束循环
+            break
 
+    plt.ioff()
+    if plt.fignum_exists(fig.number):
+        plt.show()
 
-
-
-
+run()

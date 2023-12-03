@@ -16,9 +16,10 @@ def read_contours(file):
                 all_points.append(p)
     return all_points
 
-def plot_mark_contours(points: List[Point], gradients: List[Gradient], interval: int, move: int, start_percent: float = 0, end_percent: float = 25, image_size: int = 512):
+def plot_mark_contours(points: List[Point], gradients: List[Gradient], interval: int, move: int, start_percent: float = 0, end_percent: float = 25):
     x = [point.x for point in points]
     y = [point.y for point in points]
+    
     plt.figure()
     plt.plot(x, y, label='Contour')
 
@@ -32,8 +33,8 @@ def plot_mark_contours(points: List[Point], gradients: List[Gradient], interval:
     for i in range(start_point_index, end_point_index, move):
         plt.plot([points[i].x, points[(i + interval) % len(points)].x], [points[i].y, points[(i + interval) % len(points)].y], 'r-')
 
-    plt.xlim(0, image_size)
-    plt.ylim(0, image_size)
+    plt.xlim(0, 800)
+    plt.ylim(600, 0)
     plt.legend()
     plt.show()
 
