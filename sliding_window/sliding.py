@@ -3,8 +3,11 @@ import os
 import matplotlib.pyplot as plt
 import re
 import sys
+import csv
+import pandas as pd
 sys.path.append('C:\\Users\\Lab_205\\Desktop\\image_overlapping_project')
-from contours import draw_contours as dc
+from contours.draw_contours import *
+del globals()['main']
 
 # Need to modify import contours method !!!!!!
 
@@ -28,8 +31,8 @@ def slidingwindow(k,arr,w=1):
     return list(map(int,result)) , len(list(map(int,result)))
 
 def main():
-    points =dc.read_contours(r"C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\find_pattern\2_Chinese horse chestnut\contourfiles\1060_clear.csv")
-    gradients = dc.calculate_gradients(points,interval = 15 , move=1)
+    points =read_contours(r"C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\find_pattern\2_Chinese horse chestnut\contourfiles\1060_clear.csv")
+    gradients = calculate_gradients(points,interval = 15 , move=1)
     gradient_values = [gradient.value for gradient in gradients]
     sliding_values,_ = slidingwindow(5,gradient_values,1)
     plt.plot(sliding_values)
@@ -37,50 +40,37 @@ def main():
 
 if __name__ == "__main__":
     main()
-# def get_all_file_paths(targetdir):
-#     file_paths = []
-
-#     # os.walk()返回三個值：目錄的路徑、目錄中的子目錄名稱、目錄中的檔案名稱
-#     for dirpath, _, filenames in os.walk(targetdir):
-#         for file in filenames:
-#             full_path = os.path.join(dirpath, file)
-#             file_paths.append(full_path)
-
-#     return file_paths
 
 
 
+### if you want to calculate a lot of grad modify you target dir 
+targetdir = r'C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\find_pattern\5_true indigo\contourfiles01\plot_20_rotated'
+all_files = get_all_file_paths(targetdir)
+all_files = [grad_files for grad_files in all_files if not grad_files.endswith('.jpg')]
+
+### if you want to creat new dir please check here!!!!
+output_dir = r'C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\find_pattern\5_true indigo\contourfiles01\plot_20_rotated\slid\size_20_3'
+if not os.path.exists(output_dir):
+    os.makedirs(output_dir) 
 
 
+for csvfile in all_files:
+    base_name = os.path.basename(csvfile)
+    plotname, _ = os.path.splitext(base_name)
+    output_csv_name = os.path.join(output_dir, f"{plotname}_slid.csv")
+    output_image_name = os.path.join(output_dir, f"{plotname}_slid.jpg")
 
-# ### if you want to calculate a lot of grad modify you target dir 
-# targetdir = r'C:\Users\Lab_205\Desktop\image_processing_opencv\dataset_output\find_pattern\2_Chinese horse chestnut\contourfiles'
-# all_files = get_all_file_paths(targetdir)
-
-# ### if you want to creat new dir please check here!!!!
-# output_dir = r'C:\Users\Lab_205\Desktop\image_processing_opencv\dataset_output\find_pattern\2_Chinese horse chestnut\plot_grad_5_sliding_5_1'
-# if not os.path.exists(output_dir):
-#     os.makedirs(output_dir) 
-
-
-# for csvfile in all_files:
-#     x_li , y_li = readcontours(csvfile)
-#     base_name = os.path.basename(csvfile)
-#     filename, _ = os.path.splitext(base_name)
-#     output_image_name = os.path.join(output_dir, f"{filename}_grad_5_sliding_5_1.jpg")
-#     #set gradient interval
-#     grad = gradient_for_sliding(x_li,y_li,interval=5)
-#     #set slidingwinsow parameter
-#     sliding_grad ,_= slidingwindow(5,grad,1)
-#     ###  create csv file ###
+  
+    values = []
+    with open(csvfile, "r") as f:
+        reader = f.readlines()
+        for row in reader:
+            row = float(row)
+            values.append(row)
+    #set slidingwinsow parameter
+    sliding_grad ,_= slidingwindow(20,values,3)
+    ###  create csv file ###
 
 
-#     # sliding_value = os.path.join(output_dir, f"{filename}.csv")
-#     # with open(sliding_value,'w') as f:
-#     #     for value in sliding_grad:
-#     #         f.write(f"{value},\n")
+    output_gradvalue(sliding_grad, output_image_name, output_csv_name)
 
-    
-#     plt.plot(sliding_grad)
-#     plt.savefig(output_image_name)
-#     plt.close()

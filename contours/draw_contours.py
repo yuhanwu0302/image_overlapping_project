@@ -6,7 +6,7 @@ import pandas as pd
 from point import Point , Gradient
 from typing import List
 import sys
-sys.path.append('/path/to/image_overlapping_project/')
+sys.path.append(r'/path/to/image_overlapping_project/')
 
 def read_contours(file):
     all_points = []
@@ -43,8 +43,8 @@ def get_all_file_paths(directory):
 
 
 def output_gradvalue(gradlist: List[float],output_image_name: str,output_csv_name: str):
-    df = pd.DataFrame(gradlist, columns=['Gradient Value'])
-    df.to_csv(output_csv_name, index=False)
+    df = pd.DataFrame(gradlist)
+    df.to_csv(output_csv_name, index=False,encoding="utf-8")
     plt.plot(gradlist)
     plt.xlabel('Point Index')
     plt.ylabel('Gradient Value')
@@ -77,12 +77,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-''' original contours not rotated
-points = read_contours(r"C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\find_pattern\2_Chinese horse chestnut\contourfiles01\1070_clear.csv")
-gradients = calculate_gradients(points, interval=20, move=1)
-gradient_values = [gradient.value for gradient in gradients]
-plt.plot(gradient_values)
-plt.xlabel('Point Index')
-plt.ylabel('Gradient Value')
-'''

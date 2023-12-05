@@ -4,8 +4,7 @@ import point
 import cv2 as cv
 import matplotlib.pyplot as plt
 from scipy.interpolate import interp1d
-from draw_contours import read_contours ,calculate_gradients,output_gradvalue
-from mark import plot_mark_contours ,plot_gradients 
+from mark import plot_mark_contours,plot_gradients
 from draw_contours import *
 del globals()['main']
 
@@ -107,41 +106,53 @@ def top_and_clockwise(contour):
 
     return reordered_contour
 
-#  calculate all files 
-#  csv_files = glob.glob(r'C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\find_pattern\2_Chinese horse chestnut\contourfiles01/*.csv')
 
-#############################   test data    ######################
-csv_files =r"C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\find_pattern\2_Chinese horse chestnut\contourfiles01\1070_clear.csv"
+#############################   run data    ######################
+def main():
+    targetdir = r'C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\find_pattern\2_Chinese horse chestnut\contourfiles01'
+    output_dir = r'C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\find_pattern\2_Chinese horse chestnut\contourfiles01\plot_20_rotated'
+    
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
 
-points = read_contours(csv_files)
-original_contours = np.array([(point.x, point.y) for point in points], dtype=np.float32)
-original_M = findCOM(csv_files)
-
-
-original_points = [point.Point(x, y) for x, y in original_contours.tolist()]
-original_gradients = calculate_gradients(original_points)
-original_max_gradient = max([abs(g.value) for g in original_gradients])
-leaf_tip_candidate_index = [i for i, g in enumerate(original_gradients) if abs(g.value) == original_max_gradient]
-
-farthest_point = find_leaf_tip(original_contours, original_M)
-best_candidate_index = min(leaf_tip_candidate_index, key=lambda i: np.linalg.norm(np.array([original_gradients[i].start_point.x, original_gradients[i].start_point.y]) - np.array(farthest_point)))
-
-leaf_tip = original_gradients[best_candidate_index].start_point
-leaf_tip = leaf_tip.x,leaf_tip.y
-
-angle = calculate_rotation_angle(leaf_tip,original_M)
-rotated = rotate_contour(original_contours,angle,original_M)
-adjusted_rotated = adjust_contour_position(rotated)
-clockwise = top_and_clockwise(adjusted_rotated)
-
-###calculate rotated gradient###
-
-adjusted_rotated_points=[point.Point(x, y) for x, y in clockwise]
-adjusted_rotated_grad = calculate_gradients(adjusted_rotated_points,10,10)
-gradient_values = [gradient.value for gradient in adjusted_rotated_grad]
-output_gradvalue(gradient_values, output_image_name, output_csv_name)
+    all_files = get_all_file_paths(targetdir)
+    for csvfile in all_files:
+        points = read_contours(csvfile)
+        original_contours = np.array([(point.x, point.y) for point in points], dtype=np.float32)
+        original_M = findCOM(csvfile)
 
 
+        original_points = [point.Point(x, y) for x, y in original_contours.tolist()]
+        original_gradients = calculate_gradients(original_points)
+        original_max_gradient = max([abs(g.value) for g in original_gradients])
+        leaf_tip_candidate_index = [i for i, g in enumerate(original_gradients) if abs(g.value) == original_max_gradient]
+
+        farthest_point = find_leaf_tip(original_contours, original_M)
+        best_candidate_index = min(leaf_tip_candidate_index, key=lambda i: np.linalg.norm(np.array([original_gradients[i].start_point.x, original_gradients[i].start_point.y]) - np.array(farthest_point)))
+
+        leaf_tip = original_gradients[best_candidate_index].start_point
+        leaf_tip = leaf_tip.x,leaf_tip.y
+
+        angle = calculate_rotation_angle(leaf_tip,original_M)
+        rotated = rotate_contour(original_contours,angle,original_M)
+        adjusted_rotated = adjust_contour_position(rotated)
+        clockwise = top_and_clockwise(adjusted_rotated)
+
+        ###calculate rotated gradient###
+
+        adjusted_rotated_points=[point.Point(x, y) for x, y in clockwise]
+        adjusted_rotated_grad = calculate_gradients(adjusted_rotated_points,20,1)
+        gradient_values = [gradient.value for gradient in adjusted_rotated_grad]
+        
+        base_name = os.path.basename(csvfile)
+        plotname, _ = os.path.splitext(base_name)
+
+        output_csv_name = os.path.join(output_dir, f"{plotname}.csv")
+        output_image_name = os.path.join(output_dir, f"{plotname}.jpg")
+
+        output_gradvalue(gradient_values, output_image_name, output_csv_name)
+
+main()
 
 
 
