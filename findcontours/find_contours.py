@@ -52,7 +52,7 @@ def get_all_file_paths(targetdir):
 
 
 
-targetdir = r'C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\find_pattern\18_deodar\clear'
+targetdir = r'C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\all_data\clear'
 all_files = get_all_file_paths(targetdir)
 for file_path in all_files:
-    findcontours(file_path,r'C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\find_pattern\18_deodar\contourfiles01')
+    findcontours(file_path,r'C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\all_data\contourfiles')

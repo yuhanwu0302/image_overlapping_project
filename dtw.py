@@ -23,8 +23,8 @@ def read_file_to_array(file_path):
 #18 2347~ 2423
 
 Test1 = {}
-for i in range(1060,1123):
-    file_path = rf'C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\find_pattern\2_Chinese horse chestnut\contourfiles01\plot_20_rotated\slid\{i}_clear_slid.csv'
+for i in range(2347,2424):
+    file_path = rf'C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\find_pattern\18_deodar\contourfiles01\plot_20_rotated\slid\{i}_clear_slid.csv'
     grad_array = read_file_to_array(file_path)
     Test1[f'grad_{i}'] = grad_array.reshape(-1, 1)
 
@@ -35,10 +35,11 @@ def dis(grad_number1:str,grad_number2:str):
     Test1[f"grad_{grad_number2}"],dist=euclidean)
     return distance
 
-
-
+d , l =fastdtw(Test1["grad_1060"],Test1["grad_1062"],radius=957,dist = euclidean)
+print(d)
+len(Test1["grad_1060"])
 M1_1 = np.zeros((5,5))
-for i in range(5):
+for i in range(5): 
     for j in range(5):
         distance = dis(str(i+1060), str(j+1060))
         M1_1[i, j] = distance
@@ -68,10 +69,10 @@ M1_3
 #18 2347~ 2423
 
 Test2 = {}
-len(Test1)
 
-for i in range(1195,1268):
-    file_path = rf'C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\find_pattern\5_true indigo\contourfiles01\plot_20_rotated\slid\size_20_3\{i}_clear_slid.csv'
+
+for i in range(1060,1123):
+    file_path = rf'C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\find_pattern\2_Chinese horse chestnut\contourfiles01\plot_20_rotated\slid\size_20_5\{i}_clear_slid.csv'
     grad_array = read_file_to_array(file_path)
     Test2[f'grad_{i}'] = grad_array.reshape(-1, 1)
 

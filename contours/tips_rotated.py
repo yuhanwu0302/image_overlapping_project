@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 from scipy.interpolate import interp1d
 from mark import plot_mark_contours,plot_gradients
 from draw_contours import *
+import pandas as pd
 del globals()['main']
 
 
@@ -106,12 +107,24 @@ def top_and_clockwise(contour):
 
     return reordered_contour
 
+def output_rotated_img(img,output_rotated_image_name:str,):
+    cv.imwrite(f"{output_rotated_image_name}",img)
+
+def output_rotated_img_csv(output_csv_name:str,retaed_contour):
+    df = pd.DataFrame(retaed_contour)
+    df.to_csv(output_csv_name, index=False,encoding="utf-8",header=False)
+    
 
 #############################   run data    ######################
 def main():
-    targetdir = r'C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\find_pattern\2_Chinese horse chestnut\contourfiles01'
-    output_dir = r'C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\find_pattern\2_Chinese horse chestnut\contourfiles01\plot_20_rotated'
+    targetdir = r'C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\all_data\contourfiles'
+    output_dir = r'C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\all_data\contourfiles\plot_20_rotated'
     
+    output_rotate_image_dir= r'C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\all_data\rotated_image'
+
+    if not os.path.exists(output_rotate_image_dir):
+        os.makedirs(output_rotate_image_dir)
+
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
@@ -120,8 +133,6 @@ def main():
         points = read_contours(csvfile)
         original_contours = np.array([(point.x, point.y) for point in points], dtype=np.float32)
         original_M = findCOM(csvfile)
-
-
         original_points = [point.Point(x, y) for x, y in original_contours.tolist()]
         original_gradients = calculate_gradients(original_points)
         original_max_gradient = max([abs(g.value) for g in original_gradients])
@@ -149,9 +160,12 @@ def main():
 
         output_csv_name = os.path.join(output_dir, f"{plotname}.csv")
         output_image_name = os.path.join(output_dir, f"{plotname}.jpg")
-
+        output_rotated_image_name = os.path.join(output_rotate_image_dir, f"{plotname}_rotated.jpg")
+        output_rotated_csv_name = os.path.join(output_rotate_image_dir, f"{plotname}_rotated.csv")
         output_gradvalue(gradient_values, output_image_name, output_csv_name)
-
+        rotaed_img = draw(clockwise)
+        output_rotated_img(rotaed_img,output_rotated_image_name)
+        output_rotated_img_csv(output_rotated_csv_name,clockwise)
 main()
 
 
@@ -210,3 +224,5 @@ def run(contours):
 
 run(clockwise)
 '''
+
+
