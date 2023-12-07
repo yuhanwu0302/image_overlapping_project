@@ -1,6 +1,11 @@
 import cv2 as cv 
 import numpy as np
 import os 
+import sys
+sys.path.append(r'c:\\Users\\Lab_205\\Desktop\\image_overlapping_project\\contours')
+sys.path.append(r"C:\Users\Lab_205\Desktop\image_overlapping_project")
+from contours.output import get_all_file_paths,grad_to_csv
+
 
 def set_starting_point_to_leftmost(contour):
     x = contour[:, 0, 0]
@@ -52,7 +57,8 @@ def get_all_file_paths(targetdir):
 
 
 
-targetdir = r'C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\all_data\clear'
-all_files = get_all_file_paths(targetdir)
-for file_path in all_files:
-    findcontours(file_path,r'C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\all_data\contourfiles')
+# targetdir = r'C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\all_data\clear'
+# all_files = get_all_file_paths(targetdir)
+# for file_path in all_files:
+#     findcontours(file_path,r'C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\all_data\contourfiles')
+print(get_all_file_paths(r"C:\Users\Lab_205\Desktop\image_overlapping_project\findcontours"))
