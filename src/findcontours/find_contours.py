@@ -2,9 +2,10 @@ import cv2 as cv
 import numpy as np
 import os 
 import sys
-sys.path.append(r'c:\\Users\\Lab_205\\Desktop\\image_overlapping_project\\contours')
-sys.path.append(r"C:\Users\Lab_205\Desktop\image_overlapping_project")
-from contours.output import get_all_file_paths,grad_to_csv
+sys.path.append(r'..\contours')
+sys.path.append(r'..')
+from contours.output import *
+
 
 
 def set_starting_point_to_leftmost(contour):
