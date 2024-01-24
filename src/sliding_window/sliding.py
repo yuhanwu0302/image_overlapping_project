@@ -5,8 +5,11 @@ import re
 import sys
 import csv
 import pandas as pd
-sys.path.append('C:\\Users\\Lab_205\\Desktop\\image_overlapping_project')
-from contours.draw_contours import *
+sys.path.append(r'C:\Users\Lab_205\Desktop\image_overlapping_project')
+sys.path.append(r'C:\Users\Lab_205\Desktop\image_overlapping_project\src')
+sys.path.append(r'C:\Users\Lab_205\Desktop\image_overlapping_project\src\contours')
+os.sys.path
+from src.contours.draw_contours import *
 del globals()['main']
 
 # Need to modify import contours method !!!!!!
@@ -44,12 +47,13 @@ if __name__ == "__main__":
 
 
 ### if you want to calculate a lot of grad modify you target dir 
-targetdir = r'C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\find_pattern\5_true indigo\contourfiles01\plot_20_rotated'
+targetdir = r'C:\Users\Lab_205\Desktop\image_overlapping_project\src\dataset_output\find_pattern\2_Chinese horse chestnut\contourfiles\plot_20_rotated'
 all_files = get_all_file_paths(targetdir)
 all_files = [grad_files for grad_files in all_files if not grad_files.endswith('.jpg')]
 
 ### if you want to creat new dir please check here!!!!
-output_dir = r'C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\find_pattern\5_true indigo\contourfiles01\plot_20_rotated\slid\size_20_3'
+output_dir = r'C:\Users\Lab_205\Desktop\image_overlapping_project\src\dataset_output\find_pattern\2_Chinese horse chestnut\contourfiles\plot_20_rotated\slid1'
+
 if not os.path.exists(output_dir):
     os.makedirs(output_dir) 
 
@@ -68,7 +72,7 @@ for csvfile in all_files:
             row = float(row)
             values.append(row)
     #set slidingwinsow parameter
-    sliding_grad ,_= slidingwindow(20,values,3)
+    sliding_grad ,_= slidingwindow(20,values,1)
     ###  create csv file ###
 
 

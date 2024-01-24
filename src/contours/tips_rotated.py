@@ -116,11 +116,11 @@ def output_rotated_img_csv(output_csv_name:str,retaed_contour):
     
 
 #############################   run data    ######################
-def main():
-    targetdir = r'C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\all_data\contourfiles'
-    output_dir = r'C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\all_data\contourfiles\plot_20_rotated'
+def main():       
+    targetdir = r'C:\Users\Lab_205\Desktop\image_overlapping_project\src\dataset_output\all_data\contourfiles'
+    output_dir = r'C:\Users\Lab_205\Desktop\image_overlapping_project\src\dataset_output\all_data\contourfiles\plot_20_rotated'
     
-    output_rotate_image_dir= r'C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\all_data\rotated_image'
+    output_rotate_image_dir= r'C:\Users\Lab_205\Desktop\image_overlapping_project\src\dataset_output\all_data\rotated_image'
 
     if not os.path.exists(output_rotate_image_dir):
         os.makedirs(output_rotate_image_dir)
