@@ -43,7 +43,7 @@ def contour_to_csv(contour_points, output_name:str, output_dir:str):
                 f.writelines([f"{pixel}," for pixel in layer_2])
                 f.writelines("\n")
 
-def draw_contour_to_img(contour_points:np.array, size=(800, 600),output_name:str,output_dir:str):
+def draw_contour_to_img(contour_points:np.array, output_name:str,output_dir:str,size=(800, 600)):
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
     canvas = np.zeros((size[0], size[1], 3), dtype=np.uint8)
