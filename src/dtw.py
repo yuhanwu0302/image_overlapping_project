@@ -1,7 +1,17 @@
 import numpy as np
-from fastdtw import fastdtw
+from fastdtw import fastdtw 
 from scipy.spatial.distance import euclidean
 import csv
+import numba as nb
+from tqdm.auto import tqdm
+import time 
+import os 
+
+#2  1060~ 1122
+#5  1195~ 1267
+#18 2347~ 2423
+
+np.set_printoptions(suppress = True)
 
 
 def read_file_to_array(file_path):
@@ -20,203 +30,104 @@ def dis(dic,grad_number1:str,grad_number2:str):
     return distance
 
 
-####################### test no equal grads numbers ##############
-####################### all grads is 20,1 and through sliding 20 ,1
-#2  1060~ 1122
-#5  1195~ 1267
-#18 2347~ 2423
-
-Test1 = {}
-for i in range(1060,1123):
-    file_path = rf'C:\Users\Lab_205\Desktop\image_overlapping_project\src\contours\test\grad20\slid20_1\{i}_clear_slid.csv'
-    grad_array = read_file_to_array(file_path)
-    Test1[f'grad_{i}'] = grad_array.reshape(-1, 1)
-
-Test1
-Test1_list = list(Test1.keys())
-
-### TEST FUNCTION ###
-d , l =fastdtw(Test1["grad_1060"],Test1["grad_1062"],radius=100,dist = euclidean)
-print(d)
-#####################
-
-M1_1 = np.zeros((5,5))
-for i in range(5): 
-    for j in range(5):
-        distance = dis(Test1,Test1_list[i], Test1_list[j])
-        M1_1[i, j] = distance
-        M1_1[j, i] = distance
-M1_1
+# def save_array_to_dict(folder,grad_ids:list):
+#     grad_dict = {}
+#     for i  in grad_ids:
+#         file_path = rf'{folder}\{i}_clear.csv'
+#         grad_array = read_file_to_array(file_path)
+#         grad_dict[f'grad_{i}'] = grad_array.reshape(-1, 1)
+#     return  grad_dict
 
 
-M1_2 = np.zeros((5,5))
-for i in range(5):
-    for j in range(5):
-        distance = dis(Test1,str(i+1060), str(j+1195))
-        M1_2[i, j] = distance
-        M1_2[j, i] = distance
-M1_2
+def save_array_to_dict(folder, grad_ids):
+    grad_dict = {}
+    for i in grad_ids:
+        grad_files = []
+        for entry in os.scandir(folder):
+            if entry.is_file() and entry.name.endswith('.csv') and str(i) in entry.name:
+                file_path = entry.path
+                grad_array = read_file_to_array(file_path)
+                grad_dict[f'grad_{i}'] = grad_array.reshape(-1, 1)
+    
+    return grad_dict
 
-M1_3 = np.zeros((5,5))
-for i in range(5):
-    for j in range(5):
-        distance = dis(Test1,str(i+1060), str(j+2347))
-        M1_3[i, j] = distance
-        M1_3[j, i] = distance
-M1_3
-
-############## TEST 2  about 200 grad numbers   #####################
-#2  1060~ 1122
-#5  1195~ 1267
-#18 2347~ 2423
-
-Test2 = {}
+def create_dict_name(test_id, sub_id, run_id):
+    return f"Test{test_id}_{sub_id}_{run_id}"
 
 
-for i in range(1060,1123):
-    file_path = rf'C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\find_pattern\2_Chinese horse chestnut\contourfiles01\plot_20_rotated\slid\size_20_5\{i}_clear_slid.csv'
-    grad_array = read_file_to_array(file_path)
-    Test2[f'grad_{i}'] = grad_array.reshape(-1, 1)
+def calculate_distance(grad_dict,grad_ids):
+    num_grads = len(grad_ids)
+    test_array = np.zeros((num_grads,num_grads))
+    for i in range(num_grads):
+        for j in range(num_grads):
+            grad_id_i = grad_ids[i]  
+            grad_id_j = grad_ids[j]
+            distance = dis(grad_dict, f"grad_{grad_id_i}", f"grad_{grad_id_j}")
+            test_array[i, j] = distance
+            test_array[j, i] = distance
 
-M1_1_2 = np.zeros((5,5))
-for i in range(5):
-    for j in range(5):
-        distance = dis(Test2,str(i+1060), str(j+1060))
-        M1_1_2[i, j] = distance
-        M1_1_2[j, i] = distance
-M1_1_2
-
-M1_2_2 = np.zeros((5,5))
-for i in range(5):
-    for j in range(5):
-        distance = dis(Test2,str(i+1060), str(j+1195))
-        M1_2_2[i, j] = distance
-        M1_2_2[j, i] = distance
-M1_2_2
-
-M1_3_2 = np.zeros((5,5))
-for i in range(5):
-    for j in range(5):
-        distance = dis(Test2,str(i+1060), str(j+2347))
-        M1_3_2[i, j] = distance
-        M1_3_2[j, i] = distance
-
-M1_3_2
-
-
-M1_1 == M1_1_2
-
-M1_2 == M1_2_2
-
-M1_3 == M1_3_2
-
-
-### Test3  try to find different betewwn leaf tip point up and point down ###
-
-Test3 = {}
-
-for i in range(1060,1123):
-    file_path = rf'C:\Users\Lab_205\Desktop\image_overlapping_project\src\contours\test\grad20\correctgrad20\slid20_1\{i}_clear_slid.csv'
-    grad_array = read_file_to_array(file_path)
-    Test3[f'grad_{i}'] = grad_array.reshape(-1, 1)
-
-
-T3_1 = np.zeros((5,5))
-for i in range(5):
-    for j in range(5):
-        distance = dis(Test3,str(i+1060), str(j+1060))
-        T3_1[i, j] = distance
-        T3_1[j, i] = distance
-T3_1
+    return test_array.round(0)
 
 
 
 
 
-# 反面 葉尖朝下
-Test3_2 = {}
+# def run():
+#     all_test_dict = {}
+#     test_id = "6"
+#     folder_path = [r"C:\Users\Lab_205\Desktop\image_overlapping_project\src\contours\test\two_five\noslid\pointup",r"C:\Users\Lab_205\Desktop\image_overlapping_project\src\contours\test\two_five\noslid\rotated_45",r"C:\Users\Lab_205\Desktop\image_overlapping_project\src\contours\test\two_five\noslid\rotated_90",r"C:\Users\Lab_205\Desktop\image_overlapping_project\src\contours\test\two_five\noslid\rotated_135",r"C:\Users\Lab_205\Desktop\image_overlapping_project\src\contours\test\two_five\noslid\rotated_150",r"C:\Users\Lab_205\Desktop\image_overlapping_project\src\contours\test\two_five\noslid\rotated_180"]
+    
+#     grad_ids = [1060,1061,1062,1195,1196,1197]
 
-temp1 = [1065, 1067, 1069, 1070, 1071]
-for i in temp1:
-    file_path = rf'C:\Users\Lab_205\Desktop\image_overlapping_project\src\contours\test\grad20\slid20_1\{i}_clear_slid.csv'
-    grad_array = read_file_to_array(file_path)
-    Test3_2[f'grad_{i}'] = grad_array.reshape(-1, 1)
+#     for folder, sub_id in tqdm(zip(folder_path, range(1, 7))):
+#         run_id = "3"
+#         dict_name = create_dict_name(test_id, sub_id, run_id)
+#         array_dict = save_array_to_dict(folder,grad_ids)
+#         all_test_dict[dict_name] = calculate_distance(array_dict,grad_ids)
+        
+#     return all_test_dict
 
-Test3_2_list = list(Test3_2.keys())
+def run():
+    all_test_dict = {}
+    test_id = "6"
+    folder_path = [r"C:\Users\Lab_205\Desktop\image_overlapping_project\src\contours\test\grad\correctgrad\slid20_1",r"C:\Users\Lab_205\Desktop\image_overlapping_project\src\contours\test\grad\grad_rotated90\slid20_1",r"C:\Users\Lab_205\Desktop\image_overlapping_project\src\contours\test\grad\grad_rotated135\slid20_1",r"C:\Users\Lab_205\Desktop\image_overlapping_project\src\contours\test\grad\grad_rotated150\slid20_1",r"C:\Users\Lab_205\Desktop\image_overlapping_project\src\contours\test\grad\grad_rotated180\slid20_1"]
+    
+    grad_ids = [i for i in range(1060,1123)]
 
-T3_2 = np.zeros((5,5))
-for i in range(5):
-    for j in range(5):
-        distance = dis(Test3_2,Test3_2_list[i], Test3_2_list[j])
-        T3_2[i, j] = distance
-        T3_2[j, i] = distance
-
-T3_2
-
-
-# 正面  葉尖朝上
-Test3_3 = {}
-
-temp2 = [1065, 1067, 1069, 1070, 1071]
-for i in temp2:
-    file_path = rf'C:\Users\Lab_205\Desktop\image_overlapping_project\src\contours\test\grad20\correctgrad20\slid20_1\{i}_clear_slid.csv'
-    grad_array = read_file_to_array(file_path)
-    Test3_3[f'grad_{i}'] = grad_array.reshape(-1, 1)
-
-Test3_3_list = list(Test3_3.keys())
-
-T3_3 = np.zeros((5,5))
-for i in range(5):
-    for j in range(5):
-        distance = dis(Test3_3,Test3_3_list[i], Test3_3_list[j])
-        T3_3[i, j] = distance
-        T3_3[j, i] = distance
-
-T3_3
+    for folder, sub_id in tqdm(zip(folder_path, range(1,6))):
+        run_id = "1"
+        dict_name = create_dict_name(test_id, sub_id, run_id)
+        array_dict = save_array_to_dict(folder,grad_ids)
+        all_test_dict[dict_name] = calculate_distance(array_dict,grad_ids)
+        
+    return all_test_dict
 
 
-# 3朝上3朝下   
-Test3_4 = {}
 
-temp3 = [1060, 1061, 1062, 1069, 1070, 1071]
-for i in temp3:
-    file_path = rf'C:\Users\Lab_205\Desktop\image_overlapping_project\src\contours\test\grad20\slid20_1\{i}_clear_slid.csv'
-    grad_array = read_file_to_array(file_path)
-    Test3_4[f'grad_{i}'] = grad_array.reshape(-1, 1)
+for _ in tqdm(range(1)):
+    all_test_array = run()
 
-Test3_4_list = list(Test3_4.keys())
+all_test_array['test6_1_1']
+all_test_array
+test_y =[]
+for i in all_test_array["Testtemp_0_3"]:
+    for j in i:
+        test_y.append(j)
+print(test_y)
 
-T3_4 = np.zeros((6,6))
-for i in range(6):
-    for j in range(6):
-        distance = dis(Test3_4,Test3_4_list[i], Test3_4_list[j])
-        T3_4[i, j] = distance
-        T3_4[j, i] = distance
+# point up grad_20  slid20_1
 
-T3_4
+# grad_rotated45 grad_20 slid20_1
+
+# grad_rotated90 grad_20 slid20_1
+
+# grad_rotated135 grad_20 slid20_1
+
+# grad_rotated150 grad_20 slid20_1
+
+# grad_rotated180 grad_20 slid20_1
 
 
-# 6朝上   
-Test3_5 = {}
 
-temp4 = [1060, 1061, 1062, 1069, 1070, 1071]
-for i in temp4:
-    file_path = rf'C:\Users\Lab_205\Desktop\image_overlapping_project\src\contours\test\grad20\correctgrad20\slid20_1\{i}_clear_slid.csv'
-    grad_array = read_file_to_array(file_path)
-    Test3_5[f'grad_{i}'] = grad_array.reshape(-1, 1)
-
-Test3_5_list = list(Test3_5.keys())
-
-T3_5 = np.zeros((6,6))
-for i in range(6):
-    for j in range(6):
-        distance = dis(Test3_5,Test3_5_list[i], Test3_5_list[j])
-        T3_5[i, j] = distance
-        T3_5[j, i] = distance
-
-T3_5
-
-T3_2
-T3_3
-T3_4
-T3_5
+import seaborn as sns
+sns.displot(test_y)

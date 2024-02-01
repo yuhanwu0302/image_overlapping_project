@@ -45,36 +45,51 @@ if __name__ == "__main__":
     main()
 
 
+def slid(input, output,step):
+    ### if you want to calculate a lot of grad modify you target dir 
+    targetdir = input
+    #r'C:\Users\Lab_205\Desktop\image_overlapping_project\src\contours\test\grad\correctgrad'
+    all_files = get_all_file_paths(targetdir)
+    all_files = [grad_files for grad_files in all_files if not grad_files.endswith('.jpg')]
 
-### if you want to calculate a lot of grad modify you target dir 
-targetdir = r'C:\Users\Lab_205\Desktop\image_overlapping_project\src\dataset_output\find_pattern\2_Chinese horse chestnut\contourfiles\plot_20_rotated'
-all_files = get_all_file_paths(targetdir)
-all_files = [grad_files for grad_files in all_files if not grad_files.endswith('.jpg')]
-
-### if you want to creat new dir please check here!!!!
-output_dir = r'C:\Users\Lab_205\Desktop\image_overlapping_project\src\dataset_output\find_pattern\2_Chinese horse chestnut\contourfiles\plot_20_rotated\slid1'
-
-if not os.path.exists(output_dir):
-    os.makedirs(output_dir) 
-
-
-for csvfile in all_files:
-    base_name = os.path.basename(csvfile)
-    plotname, _ = os.path.splitext(base_name)
-    output_csv_name = os.path.join(output_dir, f"{plotname}_slid.csv")
-    output_image_name = os.path.join(output_dir, f"{plotname}_slid.jpg")
-
-  
-    values = []
-    with open(csvfile, "r") as f:
-        reader = f.readlines()
-        for row in reader:
-            row = float(row)
-            values.append(row)
-    #set slidingwinsow parameter
-    sliding_grad ,_= slidingwindow(20,values,1)
-    ###  create csv file ###
+    ### if you want to creat new dir please check here!!!!
+    output_dir = output
+    #r'C:\Users\Lab_205\Desktop\image_overlapping_project\src\contours\test\grad\correctgrad\slid20_2'
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir) 
 
 
-    output_gradvalue(sliding_grad, output_image_name, output_csv_name)
+    for csvfile in all_files:
+        base_name = os.path.basename(csvfile)
+        plotname, _ = os.path.splitext(base_name)
+        output_csv_name = os.path.join(output_dir, f"{plotname}_slid.csv")
+        output_image_name = os.path.join(output_dir, f"{plotname}_slid.jpg")
 
+    
+        values = []
+        with open(csvfile, "r") as f:
+            reader = f.readlines()
+            for row in reader:
+                row = float(row)
+                values.append(row)
+        #set slidingwinsow parameter
+        sliding_grad ,_= slidingwindow(20,values,step)
+        ###  create csv file ###
+
+
+        output_gradvalue(sliding_grad, output_image_name, output_csv_name)
+
+
+
+
+
+paths = [r"C:\Users\Lab_205\Desktop\image_overlapping_project\src\contours\test_2\grad\rotated_45",r"C:\Users\Lab_205\Desktop\image_overlapping_project\src\contours\test_2\grad\rotated_90",r"C:\Users\Lab_205\Desktop\image_overlapping_project\src\contours\test_2\grad\rotated_135",
+r"C:\Users\Lab_205\Desktop\image_overlapping_project\src\contours\test_2\grad\rotated_150",r"C:\Users\Lab_205\Desktop\image_overlapping_project\src\contours\test_2\grad\rotated_180"
+]      
+rotatedegree = [r"slid20_1",r"slid20_2",r"slid20_5",r"slid20_10"]
+slidmove = [1,2,5,10]
+for i in paths:
+    for j ,k in zip(rotatedegree,slidmove):
+        full_path = os.path.join(i, j)
+        print(i,"\n",full_path,"\n", k)
+        slid(i,full_path,k)
