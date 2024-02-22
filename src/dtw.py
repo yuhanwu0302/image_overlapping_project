@@ -6,6 +6,7 @@ import numba as nb
 from tqdm.auto import tqdm
 import time 
 import os 
+import glob
 
 #2  1060~ 1122
 #5  1195~ 1267
@@ -13,47 +14,51 @@ import os
 
 np.set_printoptions(suppress = True)
 
-# FIXME
 def clean_up_rows(r):
-        row = row.strip()  
-            if row:  
-                values.append(float(row))
-
+    r = r.strip()
+    if r:
+        try:
+            return float(r)
+        except ValueError:
+            return None
 
 def read_file_to_array(file_path):
     values = []
     with open(file_path, "r") as f:
-        rows = f.readlines()
-        # row = [ clean_up_rows(r) r in rows]
         for row in f:
-            row = row.strip()  
-            if row:  
-                values.append(float(row))
-# move here
-# grad_array.reshape(-1, 1)
-    return np.array(values)
-
+            cleaned_value = clean_up_rows(row)
+            if cleaned_value is not None:  
+                values.append(cleaned_value)
+    array = np.array(values)
+    values_array = array.reshape(-1, 1)  
+    return values_array
+    
 
 def dis(dic,grad_number1:str,grad_number2:str):
     distance, _ = fastdtw(dic[grad_number1], 
     dic[grad_number2],dist=euclidean)
     return distance
 
+def fetch_files(folder, ids):
+    files_paths = []
+    for i in ids:
+        file_path = glob.glob(f"{folder}/{i}*.csv")
+        files_paths.extend(file_path)
+    return files_paths
 
-def save_array_to_dict(filepath): #folder, grad_ids):
+
+def save_array_to_dict(filepath,ids): 
     grad_dict = {}
-    # for i in grad_ids:
-    #     for entry in os.scandir(folder):
-    #         if entry.is_file() and entry.name.endswith('.csv') and str(i) in entry.name:
-                file_path = entry.path
-                grad_array = read_file_to_array(file_path)
-                grad_dict[f'grad_{i}'] = grad_array.reshape(-1, 1)
+    for file,ids in zip(filepath,ids):
+        grad_array = read_file_to_array(file)
+        grad_dict[f'grad_{ids}'] = grad_array
     
     return grad_dict
 
 
-def create_dict_name(test_id, sub_id, run_id):
-    return f"Test{test_id}_{sub_id}_{run_id}"
+
+def create_dict_name(leaf_id, angle, grad):
+    return f"Test{leaf_id}_{angle}_{grad}"
 
 
 def calculate_distance(grad_dict,grad_ids):
@@ -69,36 +74,33 @@ def calculate_distance(grad_dict,grad_ids):
 
     return test_array.round(0)
 
-#######################################
 
-def fetch_files(folder, ids):
-    # check out https://docs.python.org/3/library/glob.html
-    # os.path.join # join folders and file names
-    # file with patters
-    # list of files
+def get_all_file_path(image_path):    
+    file_list = []
+    for k, v in image_path.items():
+        try:
+            file_list.append(fetch_files(k,v))
+        except:FileNotFoundError
+    return file_list
 
-def run():
-    all_test_dict = {}
-    test_id = "6"
-    parent_folder = "C:\Users\Lab_205\Desktop\image_overlapping_project\src\contours\test_4\"
-    PRIFEX = "upand"
-    grad_ids = [i for i in range(1061,1069)]
-    image_path = {"upand45": grad_ids,
-                   "upand90": grad_ids,
-                   "upand180": [i for i in range(1061,1080)]
-                  }
-   image_path_v2 = {"45": grad_ids,
-                   "90": grad_ids,
-                   "180": [i for i in range(1061,1080)]
-                  } # key: angle/folder
-
-   
+def get_all_gradients(file_list):    
+    for f in file_list:
+        grad = "20"
+        dict_name = create_dict_name(leaf_id, angle, grad) #folder_imageID_otherInfo
+        array_dict[dict_name] = save_array_to_dict(f)
+    return array_dict
     
-    file_list = get_all_file_path(image_path) # All file (name/path) you want to work with
+def calculate_pairwise_dist(gradient_dict):
+    all_test_dict = {}    
+    # Calculate the pairwise dist matrix
+    all_test_dict[dict_name] = calculate_distance(array_dict,grad_ids) #FIXME        
+    return all_test_dict
+
+file_list = get_all_file_path(image_path) # All file (name/path) you want to work with
 
     # for pytest
     # file_list = ["f1.csv", "f2.csv"]
-    gradient_dict = get_all_gradients(file_list) # get all gradients from these files {"image_id": gradient[]}
+gradient_dict = get_all_gradients(file_list) # get all gradients from these files {"image_id": gradient[]}
 
 
     # for pytest
@@ -106,29 +108,28 @@ def run():
     #            "image_id_1": [1,2,3], 
     #            "image_id_2": [2,4,6,7,9]
     #}
-    pair_dist = calculate_pairwise_dist(gradient_dict) #  
+pair_dist = calculate_pairwise_dist(gradient_dict) #  
 
 
-def get_all_file_path(image_path):    
-    file_list = []
-    for k, v in image_path.items():
-        try:
-            file_list.append(fetch_files(k,v))
-        except ###
-    return 
-
-def get_all_gradients(file_list):    
-    for f in file_list:
-        run_id = "3"
-        dict_name = create_dict_name(test_id, sub_id, run_id)  # Include angle/folder_imageID_otherInfo
-        array_dict[dict_name] = save_array_to_dict(f)
-    return array_dict
 
 
-def calculate_pairwise_dist(gradient_dict):    
-    # Calculate the pairwise dist matrix
-    all_test_dict[dict_name] = calculate_distance(array_dict,grad_ids) #FIXME        
-    return all_test_dict
+
+
+def run():
+    all_test_dict = {}
+    test_id = "6"
+    parent_folder =    r"C:\Users\Lab_205\Desktop\image_overlapping_project\src\contours\test_4"
+    PRIFEX = "upand"
+    grad_ids = [i for i in range(1061,1069)]
+    image_path = {"upand45": grad_ids,
+                   "upand90": grad_ids,
+                   "upand180": [i for i in range(1061,1080)]
+                  }
+    image_path_v2 = {"45": grad_ids,
+                   "90": grad_ids,
+                   "180": [i for i in range(1061,1080)]
+                  } # key: angle/folder
+
 
 
 
