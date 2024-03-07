@@ -1,125 +1,144 @@
-import numpy as np
-from fastdtw import fastdtw 
-from scipy.spatial.distance import euclidean
-import csv
-import numba as nb
-from tqdm.auto import tqdm
-import time 
-import os 
+import glob
+import os
+from itertools import product
 
+import numpy as np
+import pandas as pd
+from fastdtw import fastdtw
+from scipy.spatial.distance import euclidean
+from tqdm.auto import tqdm
+from collections import defaultdict
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.neighbors import KernelDensity
 #2  1060~ 1122
 #5  1195~ 1267
 #18 2347~ 2423
 
-np.set_printoptions(suppress = True)
 
 
-def read_file_to_array(file_path):
-    values = []
+def run(leaf_name, grad_rotate, dir,selected_ids):
+
+
+    ### TODO: need change dir name  ###
+    np.set_printoptions(suppress = True)
+    all_gradient_dict = {}
+
+    file_list = get_all_file_path(dir)
+    gradient_dict = get_all_gradients(file_list)
+    all_gradient_dict[rf"{leaf_name}_{grad_rotate}"] = gradient_dict
+    selected_leaves_grads = ["detect_diff_rotate_90"]
+    pair_dist = calculate_pairwise_dist(all_gradient_dict, selected_leaves_grads, selected_ids)
+
+    return pair_dist
+
+def get_all_file_path(image_path):    
+    return glob.glob(os.path.join(image_path, "*.csv"))
+
+def get_all_gradients(file_list):
+    gradient_dict = {}
+    for filepath in file_list:
+        data_id = os.path.basename(filepath).strip(".csv")
+        gradient_dict[data_id] = load_gradients(filepath)
+    return gradient_dict
+
+def load_gradients(file_path):
     with open(file_path, "r") as f:
-        for row in f:
-            row = row.strip()  
-            if row:  
-                values.append(float(row))
-    return np.array(values)
+        gradients = np.array([str_to_float(row) for row in f.readlines()])
 
+    return gradients.reshape(-1, 1)
 
-def dis(dic,grad_number1:str,grad_number2:str):
-    distance, _ = fastdtw(dic[grad_number1], 
-    dic[grad_number2],dist=euclidean)
+def str_to_float(r):
+    return float(r.strip())
+
+def calculate_pairwise_dist(all_gradient_dict, leaves_grads, ids):
+    combined = list(product(leaves_grads, ids))
+    # A 2D-dict
+    pairwise_dist = defaultdict(dict)
+    
+    for _, (leaf_grad_1, id_1) in enumerate(combined):
+        name_1 = f"{leaf_grad_1}_{id_1}"
+        # The distance should be 0
+        diagonal_dis = dis(all_gradient_dict[leaf_grad_1][id_1], all_gradient_dict[leaf_grad_1][id_1])
+        pairwise_dist[name_1][name_1] = diagonal_dis
+
+        for _, (leaf_grad_2, id_2) in enumerate(combined):
+            name_2 = f"{leaf_grad_2}_{id_2}"
+            print(name_1, name_2)
+            pairwise_dist[name_1][name_2] = dis(all_gradient_dict[leaf_grad_1][id_1], all_gradient_dict[leaf_grad_2][id_2])
+            pairwise_dist[name_2][name_1] = pairwise_dist[name_1][name_2]
+    
+    return pairwise_dist
+            
+def dis(grad_1, grad_2):
+    distance, _ = fastdtw(grad_1, grad_2,dist=euclidean)
     return distance
 
 
-def save_array_to_dict(folder, grad_ids):
-    grad_dict = {}
-    for i in grad_ids:
-        for entry in os.scandir(folder):
-            if entry.is_file() and entry.name.endswith('.csv') and str(i) in entry.name:
-                file_path = entry.path
-                grad_array = read_file_to_array(file_path)
-                grad_dict[f'grad_{i}'] = grad_array.reshape(-1, 1)
-    
-    return grad_dict
-
-def create_dict_name(test_id, sub_id, run_id):
-    return f"Test{test_id}_{sub_id}_{run_id}"
+#     # for pytest
+#     # file_list = ["f1.csv", "f2.csv"]
+# gradient_dict = get_all_gradients(file_list) # get all gradients from these files {"image_id": gradient[]}
 
 
-def calculate_distance(grad_dict,grad_ids):
-    num_grads = len(grad_ids)
-    test_array = np.zeros((num_grads,num_grads))
-    for i in range(num_grads):
-        for j in range(num_grads):
-            grad_id_i = grad_ids[i]  
-            grad_id_j = grad_ids[j]
-            distance = dis(grad_dict, f"grad_{grad_id_i}", f"grad_{grad_id_j}")
-            test_array[i, j] = distance
-            test_array[j, i] = distance
+#     # for pytest
+#     # gradient_dict = {
+#     #            "image_id_1": [1,2,3], 
+#     #            "image_id_2": [2,4,6,7,9]
+#     #}
+# selected_ids = [""]
+# pair_dist = calculate_pairwise_dist(gradient_dict) #  
 
-    return test_array.round(0)
-
-#######################################
-
-def run():
-    all_test_dict = {}
-    test_id = "6"
-    folder_path = [r"C:\Users\Lab_205\Desktop\image_overlapping_project\src\contours\test_4\upand45",
-    r"C:\Users\Lab_205\Desktop\image_overlapping_project\src\contours\test_4\upand90"]
-    
-    ### need change ###
-    grad_ids = [i for i in range(1061,1069)]
-
-    for folder, sub_id in tqdm(zip(folder_path, range(1,3))):
-        run_id = "3"
-        dict_name = create_dict_name(test_id, sub_id, run_id)
-        array_dict = save_array_to_dict(folder,grad_ids)
-        all_test_dict[dict_name] = calculate_distance(array_dict,grad_ids)
-        
-    return all_test_dict
-
-
-
-for _ in tqdm(range(1)):
-    all_test_array = run()
-
-
-all_test_array_1  #pointup
-all_test_array_2  #45
-all_test_array_3 # up 45 and up 90
 
 ########## plot  ##########
-keys = ["Test6_1_2", 'Test6_2_2', "Test6_3_2", "Test6_4_2", "Test6_5_2","Test6_6_2"]
-labels = ["Test6_1_2", 'Test6_2_2_45', "Test6_3_2_90", "Test6_4_2_135", "Test6_5_2_150","Test6_6_2_180"]
 
-import numpy as np
-import seaborn as sns
-import matplotlib.pyplot as plt
-from scipy.stats import norm
-from sklearn.neighbors import KernelDensity
-for key , label in zip(keys,labels):
-    test_y =[]
-    for i in all_test_array_3[key]:
-        for j in i:
-            test_y.append(j)    
+
+def plot_kde_and_CI(values,CI:int, compare_n_values=10 ,compare=False):
+    value = np.array(values).reshape(-1,1)
 
     kde = KernelDensity(bandwidth=1.0, kernel='gaussian')
-    kde.fit(np.array(test_y).reshape(-1, 1))
- 
-    x = np.linspace(min(test_y), max(test_y), 1000).reshape(-1, 1)
+    kde.fit(value)
+
+    x = np.linspace(min(value), max(value), 1000).reshape(-1, 1)
     pdf = np.exp(kde.score_samples(x))
     cdf = np.cumsum(pdf) * (x[1] - x[0])
 
-    confidence_level = 0.95
+    confidence_level = CI
     lower_bound = x[np.argmax(cdf >= (1-confidence_level)/2)][0]
     upper_bound = x[np.argmax(cdf >= 1-(1-confidence_level)/2)][0]
 
+    value_1d = value.flatten()
+    p = sns.histplot(value_1d, kde=True,label='All Data', color='blue')
+    if compare:
+        compare_value = value_1d[-compare_n_values:]
+        sns.histplot(compare_value, kde=False, color='red', label='Last 10 Data', bins=30, alpha=0.7)
 
-    p= sns.histplot(test_y, kde=True)
-    plt.title(label)
+    plt.title('test_detect_diff')
     plt.axvline(lower_bound, color="r", linestyle="--", label=f"{confidence_level*100}% CI")
     plt.axvline(upper_bound, color="r", linestyle="--")
     p.set_xlabel("distance")
     p.set_ylabel("freq")
+    plt.xlim(0,1800)
     plt.legend()
     plt.show()
     print(f"95% Confidence Interval: ({lower_bound}, {upper_bound})")
+
+
+
+
+
+for _ in tqdm(range(1)):
+    leaf_names=["detect_diff"]
+    grad_rotates =["rotate_90"]
+    selected_ids = [str(id) + "_clear" for id in list(range(1195, 1220)) + list(range(2114, 2119))]
+    for leaf_name in leaf_names:
+        for grad_rotate in grad_rotates:
+                image_path = fr"../dataset_output/find_pattern/{leaf_name}/contourfiles/grad/{grad_rotate}/" 
+                result1 = run(leaf_name,grad_rotate,image_path,selected_ids)
+df1 = pd.DataFrame(result1)
+
+values =[]
+for i in df1.values:
+    for j in i:
+        values.append(j)
+
+plot_kde_and_CI(values,0.95,6,True)
