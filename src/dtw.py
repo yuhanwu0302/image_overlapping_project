@@ -27,7 +27,7 @@ def run(leaf_name, grad_rotate, dir,selected_ids):
     file_list = get_all_file_path(dir)
     gradient_dict = get_all_gradients(file_list)
     all_gradient_dict[rf"{leaf_name}_{grad_rotate}"] = gradient_dict
-    selected_leaves_grads = ["detect_diff_rotate_90"]
+    selected_leaves_grads = [rf"{leaf_name}_{grad_rotate}"]
     pair_dist = calculate_pairwise_dist(all_gradient_dict, selected_leaves_grads, selected_ids)
 
     return pair_dist
@@ -71,7 +71,7 @@ def calculate_pairwise_dist(all_gradient_dict, leaves_grads, ids):
     return pairwise_dist
             
 def dis(grad_1, grad_2):
-    distance, _ = fastdtw(grad_1, grad_2,dist=euclidean)
+    distance = fastdtw(grad_1, grad_2,dist=euclidean)
     return distance
 
 
@@ -92,7 +92,7 @@ def dis(grad_1, grad_2):
 ########## plot  ##########
 
 
-def plot_kde_and_CI(values,CI:int, compare_n_values=10 ,compare=False):
+def plot_kde_and_CI(title:str,values,CI:int, compare_n_values=10 ,compare=False):
     value = np.array(values).reshape(-1,1)
 
     kde = KernelDensity(bandwidth=1.0, kernel='gaussian')
@@ -110,35 +110,70 @@ def plot_kde_and_CI(values,CI:int, compare_n_values=10 ,compare=False):
     p = sns.histplot(value_1d, kde=True,label='All Data', color='blue')
     if compare:
         compare_value = value_1d[-compare_n_values:]
-        sns.histplot(compare_value, kde=False, color='red', label='Last 10 Data', bins=30, alpha=0.7)
+        sns.histplot(compare_value, kde=False, color='red', label=f'{title}_Data', bins=30, alpha=0.7)
 
-    plt.title('test_detect_diff')
+    plt.title(title)
     plt.axvline(lower_bound, color="r", linestyle="--", label=f"{confidence_level*100}% CI")
     plt.axvline(upper_bound, color="r", linestyle="--")
     p.set_xlabel("distance")
     p.set_ylabel("freq")
-    plt.xlim(0,1800)
     plt.legend()
     plt.show()
     print(f"95% Confidence Interval: ({lower_bound}, {upper_bound})")
 
 
 
-
+#1195 1268   #1324  #1160
 
 for _ in tqdm(range(1)):
-    leaf_names=["detect_diff"]
-    grad_rotates =["rotate_90"]
-    selected_ids = [str(id) + "_clear" for id in list(range(1195, 1220)) + list(range(2114, 2119))]
-    for leaf_name in leaf_names:
-        for grad_rotate in grad_rotates:
-                image_path = fr"../dataset_output/find_pattern/{leaf_name}/contourfiles/grad/{grad_rotate}/" 
-                result1 = run(leaf_name,grad_rotate,image_path,selected_ids)
+    leaf_names=["detect_diff","7_Nanmu"]
+    grad_rotates =["correctgrad","rotate_45"]
+    selected_ids1 = [str(id) + "_clear" for id in list(range(1195, 1201)) + list(range(1324, 1331))]
+    selected_ids2 = [str(id) + "_clear" for id in list(range(1324, 1330))]
+    select_id_lists = [selected_ids1,selected_ids2]
+    all_results = {}
+    for leaf_name,grad_rotate,selected_ids in zip(leaf_names,grad_rotates,select_id_lists):
+                    image_path = fr"../dataset_output/find_pattern/{leaf_name}/contourfiles/grad/{grad_rotate}/" 
+                    result = run(leaf_name,grad_rotate,image_path,selected_ids)
+                    
+                    key = f"{leaf_name}_{grad_rotate}"
+                    all_results[key] = result
+
+all_results["detect_diff"].keys()
+df3 = pd.DataFrame(result3)
+df2 = pd.DataFrame(result2)
 df1 = pd.DataFrame(result1)
 
-values =[]
-for i in df1.values:
-    for j in i:
-        values.append(j)
 
-plot_kde_and_CI(values,0.95,6,True)
+
+temp = np.zeros((94, 94))
+index = 0
+for i in range(94):
+    for j in range(94):
+        temp[i,j] = df2.iloc[i,j]
+        index += 1
+
+
+# leaf1_self_dis
+leaf1_dis = []  
+for i in range(0,73):
+    for j in range(i+1,73):
+        leaf1_dis.append(temp[i,j])
+
+#leaf2_self_dis
+leaf2_dis = []
+for i in range(73,93):
+    for j in range(i+1,93):
+        leaf2_dis.append(temp[i,j])
+# difference leaf dis 
+diff_dis = []
+for i in range(0,73):
+    for j in range(73,93):
+        diff_dis.append(temp[i,j])
+len(diff_dis)
+dis_list=[]
+dis_list = leaf1_dis +leaf2_dis+diff_dis
+plot_kde_and_CI('diff_1460',dis_list,0.95,compare_n_values=1460,compare=True)
+
+
+
