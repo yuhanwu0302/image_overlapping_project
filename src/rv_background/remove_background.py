@@ -3,7 +3,7 @@ import numpy as np
 import os
 import glob
 import re
-folder = r"C:\Users\Lab_205\Desktop\image_overlapping_project\plant leaf_01\dataset_output\find_pattern\18_deodar\raw"
+folder = r"C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\find_pattern\overlapping\raw"
 
 def create_savename(file, save_folder):
     basename = os.path.basename(file)

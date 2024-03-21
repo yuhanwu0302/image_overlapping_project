@@ -5,7 +5,7 @@ import sys
 sys.path.append(r'..\contours')
 sys.path.append(r'..')
 from contours.output import *
-
+sys.path
 
 
 def set_starting_point_to_leftmost(contour):
@@ -57,9 +57,8 @@ def get_all_file_paths(targetdir):
     return file_paths
 
 
-
-# targetdir = r'C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\all_data\clear'
+# need to revise def run()
+# targetdir = r'C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\find_pattern\overlapping\clear'
 # all_files = get_all_file_paths(targetdir)
 # for file_path in all_files:
-#     findcontours(file_path,r'C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\all_data\contourfiles')
-print(get_all_file_paths(r"C:\Users\Lab_205\Desktop\image_overlapping_project\findcontours"))
+#     findcontours(file_path,r'C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\find_pattern\overlapping\contourfiles')

@@ -24,7 +24,7 @@ def run(leaf_name, grad_rotate, dir,selected_ids):
     np.set_printoptions(suppress = True)
     all_gradient_dict = {}
 
-    file_list = get_all_file_path(dir)
+    file_list = get_all_csv_path(dir)
     gradient_dict = get_all_gradients(file_list)
     all_gradient_dict[rf"{leaf_name}_{grad_rotate}"] = gradient_dict
     selected_leaves_grads = [rf"{leaf_name}_{grad_rotate}"]
@@ -32,7 +32,7 @@ def run(leaf_name, grad_rotate, dir,selected_ids):
 
     return pair_dist
 
-def get_all_file_path(image_path):    
+def get_all_csv_path(image_path):    
     return glob.glob(os.path.join(image_path, "*.csv"))
 
 def get_all_gradients(file_list):
@@ -142,75 +142,55 @@ def plot_kde_and_CI(title:str,values,CI:int, compare_n_values=0 ,compare=False):
     print(f"{CI*100}% Confidence Interval: ({lower_bound}, {upper_bound})")
 
 #1195 1268   #1324  #1160
-
-for _ in tqdm(range(1)):
-    leaf_names=["overlapping"]
-    grad_rotates =["correctgrad"]
-    selected_ids1 = [str(id) + "_clear" for id in list(range(1195, 1200)) + list(range(6000, 6003))]
-    # selected_ids2 = [str(id) + "_clear" for id in list(range(1324, 1330))]
-    # select_id_lists = [selected_ids1,selected_ids2]
-    select_id_lists=[selected_ids1]
-    all_results = {}
-    for leaf_name,grad_rotate,selected_ids in zip(leaf_names,grad_rotates,select_id_lists):
-                    image_path = fr"../dataset_output/find_pattern/{leaf_name}/contourfiles/grad/{grad_rotate}/" 
-                    result = run(leaf_name,grad_rotate,image_path,selected_ids)
-                    
-                    key = f"{leaf_name}_{grad_rotate}"
-                    all_results[key] = result
-
-df  = pd.DataFrame(all_results['detect_diff_correctgrad'])
-df1 = pd.DataFrame(all_results['overlapping_correctgrad'])
-df1.shape
-df1
-
-temp = np.zeros((34, 34))
-index = 0
-for i in range(34):
-    for j in range(34):
-        temp[i,j] = df1.iloc[i,j]
-        index += 1
-
-
-# leaf1_self_dis
-leaf1_dis = []  
-for i in range(0,31):
-    for j in range(i+1,31):
-        leaf1_dis.append(temp[i,j])
-
-#leaf2_self_dis
-leaf2_dis = []
-for i in range(31,34):
-    for j in range(i+1,34):
-        leaf2_dis.append(temp[i,j])
-# difference leaf dis 
-diff_dis = []
-for i in range(0,31):
-    for j in range(31,34):
-        diff_dis.append(temp[i,j])
-
-len(diff_dis)
-dis_list=[]
-dis_list = leaf1_dis + diff_dis
-plot_kde_and_CI('diff_93',dis_list,0.55,compare_n_values=93,compare=True)
-
-
-
-
-def test_run():
+def temp_run():
     for _ in tqdm(range(1)):
-        leaf_names=["test"]
-        grad_rotates =["pointup"]
-        selected_ids1 = [str(id) + "_test" for id in list(range(1060, 1062))]
+        leaf_names=["overlapping"]
+        grad_rotates =["correctgrad"]
+        selected_ids1 = [str(id) + "_clear" for id in list(range(1195, 1200)) + list(range(6000, 6003))]
+        # selected_ids2 = [str(id) + "_clear" for id in list(range(1324, 1330))]
+        # select_id_lists = [selected_ids1,selected_ids2]
         select_id_lists=[selected_ids1]
         all_results = {}
         for leaf_name,grad_rotate,selected_ids in zip(leaf_names,grad_rotates,select_id_lists):
-                        image_path = fr"../{leaf_name}/{grad_rotate}/" 
+                        image_path = fr"../../dataset_output/find_pattern/{leaf_name}/contourfiles/grad/{grad_rotate}/" 
                         result = run(leaf_name,grad_rotate,image_path,selected_ids)
                         
                         key = f"{leaf_name}_{grad_rotate}"
                         all_results[key] = result
 
+    df  = pd.DataFrame(all_results['detect_diff_correctgrad'])
+    df1 = pd.DataFrame(all_results['overlapping_correctgrad'])
+    df1.shape
 
-    all_results
-    df = pd.DataFrame(all_results['test_pointup'])
-    df
+
+    temp = np.zeros((34, 34))
+    index = 0
+    for i in range(34):
+        for j in range(34):
+            temp[i,j] = df1.iloc[i,j]
+            index += 1
+
+
+    # leaf1_self_dis
+    leaf1_dis = []  
+    for i in range(0,31):
+        for j in range(i+1,31):
+            leaf1_dis.append(temp[i,j])
+
+    #leaf2_self_dis
+    leaf2_dis = []
+    for i in range(31,34):
+        for j in range(i+1,34):
+            leaf2_dis.append(temp[i,j])
+    # difference leaf dis 
+    diff_dis = []
+    for i in range(0,31):
+        for j in range(31,34):
+            diff_dis.append(temp[i,j])
+
+    len(diff_dis)
+    dis_list=[]
+    dis_list = leaf1_dis + diff_dis
+    plot_kde_and_CI('diff_93',dis_list,0.55,compare_n_values=93,compare=True)
+
+

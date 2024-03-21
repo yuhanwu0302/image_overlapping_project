@@ -117,10 +117,10 @@ def output_rotated_img_csv(output_csv_name:str,retaed_contour):
 
 #############################   run data    ######################
 def main():       
-    targetdir = r'C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\all_data\contourfiles'
-    output_dir = r'C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\all_data\all_correct'
+    targetdir = r'C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\find_pattern\overlapping\contourfiles'
+    output_dir = r'C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\find_pattern\overlapping\contourfiles\all_correct'
     
-    output_rotate_image_dir= r'C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\all_data\all_correct'
+    output_rotate_image_dir= r'C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\find_pattern\overlapping\contourfiles\all_correct'
 
     if not os.path.exists(output_rotate_image_dir):
         os.makedirs(output_rotate_image_dir)
@@ -160,12 +160,12 @@ def main():
 
         output_csv_name = os.path.join(output_dir, f"{plotname}.csv")
         output_image_name = os.path.join(output_dir, f"{plotname}.jpg")
-        # output_rotated_image_name = os.path.join(output_rotate_image_dir, f"{plotname}_rotated.jpg")
-        # output_rotated_csv_name = os.path.join(output_rotate_image_dir, f"{plotname}_rotated.csv")
+        output_rotated_image_name = os.path.join(output_rotate_image_dir, f"{plotname}_rotated.jpg")
+        output_rotated_csv_name = os.path.join(output_rotate_image_dir, f"{plotname}_rotated.csv")
         output_gradvalue(gradient_values, output_image_name, output_csv_name)
-        # rotaed_img = draw(clockwise)
-        # output_rotated_img(rotaed_img,output_rotated_image_name)
-        # output_rotated_img_csv(output_rotated_csv_name,clockwise)
+        rotaed_img = draw(clockwise)
+        output_rotated_img(rotaed_img,output_rotated_image_name)
+        output_rotated_img_csv(output_rotated_csv_name,clockwise)
 
 
 main()
