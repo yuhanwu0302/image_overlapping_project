@@ -3,10 +3,9 @@ import re
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from point import Point , Gradient
+from contours.point import Point , Gradient
 from typing import List
-import sys
-sys.path.append(r'/path/to/image_overlapping_project/')
+
 
 def read_contours(file):
     all_points = []
