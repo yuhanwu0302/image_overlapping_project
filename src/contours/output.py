@@ -5,7 +5,7 @@ import glob
 import re
 import matplotlib.pyplot as plt
 from typing import List
-from point import Point , Gradient
+from contours.point import Point , Gradient
 import pandas as pd 
 
 def get_all_file_paths(targetdir: str):

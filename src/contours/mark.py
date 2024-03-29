@@ -1,9 +1,9 @@
 import os
 import re
 import matplotlib.pyplot as plt
-from point import Point, Gradient
+from contours.point import Point, Gradient
 from typing import List
-from draw_contours import calculate_gradients
+from contours.draw_contours import calculate_gradients
 
 def read_contours(file):
     all_points = []
@@ -36,6 +36,16 @@ def plot_mark_contours(points: List[Point], gradients: List[Gradient], interval:
     plt.xlim(0, 800)
     plt.ylim(600, 0)
     plt.legend()
+    plt.plot(points[start_point_index].x, points[start_point_index].y, 'go', label='Starting Point')  
+    plt.plot(points[end_point_index].x, points[end_point_index].y, 'ro', label='Ending Point')  
+
+    plt.xlim(0, 800)
+    plt.ylim(600, 0)
+    plt.legend()
+    plt.title(f"Gradient Marking from {start_percent}% to {end_percent}%")
+    plt.show()
+
+
     plt.show()
 
 
@@ -63,13 +73,13 @@ def plot_gradients(gradients: List[Gradient], interval: int, move: int, start_pe
 
 # setting filepath intervel move and which part to which part  
 def main():
-    filepath = r'C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\find_pattern\2_Chinese horse chestnut\contourfiles\1069_clear.csv'
+    filepath = r'C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\find_pattern\overlapping\contourfiles\6000_clear.csv'
     interval = 10
     move = 1
     points = read_contours(filepath)
     gradients = calculate_gradients(points, interval, move)
-    plot_mark_contours(points, gradients, interval, move,40,80)
-    plot_gradients(gradients, interval, move,40,80)
+    plot_mark_contours(points, gradients, interval, move,18,36)
+    plot_gradients(gradients, interval, move,18,36)
 
 if __name__ == "__main__":
     main()

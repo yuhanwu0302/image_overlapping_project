@@ -5,11 +5,7 @@ import re
 import sys
 import csv
 import pandas as pd
-sys.path.append(r'C:\Users\Lab_205\Desktop\image_overlapping_project')
-sys.path.append(r'C:\Users\Lab_205\Desktop\image_overlapping_project\src')
-sys.path.append(r'C:\Users\Lab_205\Desktop\image_overlapping_project\src\contours')
-os.sys.path
-from src.contours.draw_contours import *
+from contours.draw_contours import *
 del globals()['main']
 
 # Need to modify import contours method !!!!!!

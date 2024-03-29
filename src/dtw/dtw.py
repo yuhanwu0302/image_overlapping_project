@@ -74,6 +74,9 @@ def dis(grad_1, grad_2):
     distance,_ = fastdtw(grad_1, grad_2,dist=euclidean)
     return distance
 
+def pairing_point(grad_1, grad_2):
+    _ ,match = fastdtw(grad_1, grad_2,dist=euclidean)
+    return match
 
 #     # for pytest
 #     # file_list = ["f1.csv", "f2.csv"]
@@ -148,7 +151,7 @@ def temp_run(leaf1_num,leaf2_num):
     for _ in tqdm(range(1)):
         leaf_names=["overlapping"]
         grad_rotates =["correctgrad"]
-        selected_ids1 = [str(id) + "_clear" for id in list(range(1195, 1200)) + list(range(6000, 6003))]
+        selected_ids1 = [str(id) + "_clear" for id in list(range(1195, 1267)) + list(range(6000, 6003))]
         # selected_ids2 = [str(id) + "_clear" for id in list(range(1324, 1330))]
         # select_id_lists = [selected_ids1,selected_ids2]
         select_id_lists=[selected_ids1]
@@ -193,4 +196,4 @@ def temp_run(leaf1_num,leaf2_num):
     dis_list = leaf1_dis + diff_dis
     plot_kde_and_CI(f'diff_{len(diff_dis)}',dis_list,0.95,compare_n_values=len(diff_dis),compare=True)
 
-
+temp_run(73,3)

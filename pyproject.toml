@@ -3,7 +3,7 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "overlapping_project"
+name = "image_overlapping_project"
 version = "0.0.1"
 authors = [
   { name="YuHan ,Wu", email="jack57648893@gmail.com" },
@@ -20,3 +20,17 @@ classifiers = [
 [project.urls]
 "Homepage" = "https://github.com/ComputationalAgronomy/image_overlapping_project.git"
 "Bug Tracker" = "https://github.com/ComputationalAgronomy/image_overlapping_project/issues"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = "src"
+addopts = [
+    "--import-mode=importlib",
+]
