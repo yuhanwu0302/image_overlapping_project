@@ -3,10 +3,9 @@ import re
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from point import Point , Gradient
+from contours.point import Point , Gradient
 from typing import List
-import sys
-sys.path.append(r'/path/to/image_overlapping_project/')
+
 
 def read_contours(file):
     all_points = []
@@ -53,8 +52,8 @@ def output_gradvalue(gradlist: List[float],output_image_name: str,output_csv_nam
 
 
 def main():
-    targetdir = r'C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\all_data\contourfiles'
-    output_dir = r'C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\all_dataoriginal_grad20_1'
+    targetdir = r'C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\find_pattern\overlapping\contourfiles'
+    output_dir = r'C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\find_pattern\overlapping\grad20_1'
     
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
@@ -77,3 +76,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
