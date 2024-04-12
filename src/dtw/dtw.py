@@ -144,14 +144,66 @@ def plot_kde_and_CI(title:str,values,CI:int, compare_n_values=0 ,compare=False):
     plt.show()
     print(f"{CI*100}% Confidence Interval: ({lower_bound}, {upper_bound})")
 
-#1195 1268   #1324  #1160
+# compare 1195 1268   #1324  #1160
 
 
-def temp_run(leaf1_num,leaf2_num):
+# def temp_run(leaf1_num,leaf2_num):
+#     for _ in tqdm(range(1)):
+#         leaf_names=["overlapping"]
+#         grad_rotates =["correctgrad"]
+#         selected_ids1 = [str(id) + "_clear" for id in list(range(1195, 1267)) + list(range(6000, 6003))]
+#         # selected_ids2 = [str(id) + "_clear" for id in list(range(1324, 1330))]
+#         # select_id_lists = [selected_ids1,selected_ids2]
+#         select_id_lists=[selected_ids1]
+#         all_results = {}
+#         for leaf_name,grad_rotate,selected_ids in zip(leaf_names,grad_rotates,select_id_lists):
+#                         image_path = fr"../../dataset_output/find_pattern/{leaf_name}/contourfiles/grad/{grad_rotate}/" 
+#                         result = run(leaf_name,grad_rotate,image_path,selected_ids)
+                        
+#                         key = f"{leaf_name}_{grad_rotate}"
+#                         all_results[key] = result
+
+#     df = pd.DataFrame(all_results['overlapping_correctgrad'])
+
+
+#     total_num = df.shape[0]
+#     temp = np.zeros((total_num,total_num))
+
+#     index = 0
+#     for i in range(total_num):
+#         for j in range(total_num):
+#             temp[i,j] = df.iloc[i,j]
+#             index += 1
+
+#     # leaf1_self_dis
+#     leaf1_dis = []  
+#     for i in range(0,leaf1_num):
+#         for j in range(i+1,leaf1_num):
+#             leaf1_dis.append(temp[i,j])
+
+#     #leaf2_self_dis
+#     leaf2_dis = []
+#     for i in range(leaf1_num,):
+#         for j in range(i+1,total_num):
+#             leaf2_dis.append(temp[i,j])
+#     # difference leaf dis 
+#     diff_dis = []
+#     for i in range(0,leaf1_num):
+#         for j in range(leaf1_num,total_num):
+#             diff_dis.append(temp[i,j])
+
+#     dis_list=[]
+#     dis_list = leaf1_dis + diff_dis
+#     plot_kde_and_CI(f'diff_{len(diff_dis)}',dis_list,0.95,compare_n_values=len(diff_dis),compare=True)
+
+# temp_run(73,3)
+
+
+def temp_run(leaf1_num):
     for _ in tqdm(range(1)):
         leaf_names=["overlapping"]
-        grad_rotates =["correctgrad"]
-        selected_ids1 = [str(id) + "_clear" for id in list(range(1195, 1267)) + list(range(6000, 6003))]
+        grad_rotates =["grad20_1"]
+        selected_ids1 = [str(id) + "_clear" for id in list(range(6000, 6101))]
         # selected_ids2 = [str(id) + "_clear" for id in list(range(1324, 1330))]
         # select_id_lists = [selected_ids1,selected_ids2]
         select_id_lists=[selected_ids1]
@@ -163,7 +215,7 @@ def temp_run(leaf1_num,leaf2_num):
                         key = f"{leaf_name}_{grad_rotate}"
                         all_results[key] = result
 
-    df = pd.DataFrame(all_results['overlapping_correctgrad'])
+    df = pd.DataFrame(all_results['overlapping_grad20_1'])
 
 
     total_num = df.shape[0]
@@ -193,7 +245,7 @@ def temp_run(leaf1_num,leaf2_num):
             diff_dis.append(temp[i,j])
 
     dis_list=[]
-    dis_list = leaf1_dis + diff_dis
-    plot_kde_and_CI(f'diff_{len(diff_dis)}',dis_list,0.95,compare_n_values=len(diff_dis),compare=True)
+    dis_list = leaf1_dis
+    plot_kde_and_CI(f'diff_{len(diff_dis)}',dis_list,0.95,compare_n_values=len(diff_dis),compare=False)
 
-temp_run(73,3)
+temp_run(100)
