@@ -4,8 +4,8 @@ import point
 import cv2 as cv
 import matplotlib.pyplot as plt
 from scipy.interpolate import interp1d
-from mark import plot_mark_contours,plot_gradients
-from draw_contours import *
+from contours.mark import plot_mark_contours,plot_gradients
+from contours.draw_contours import *
 import pandas as pd
 del globals()['main']
 
@@ -168,7 +168,7 @@ def main():
         output_rotated_img_csv(output_rotated_csv_name,clockwise)
 
 
-main()
+
 
 '''check which part is which part
 interval = 10

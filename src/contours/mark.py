@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from contours.point import Point, Gradient
 from typing import List
 from contours.draw_contours import calculate_gradients
-
+from contours.output import grad_to_csv
 def read_contours(file):
     all_points = []
     with open(file, 'r') as f:
@@ -51,7 +51,7 @@ def plot_mark_contours(points: List[Point], gradients: List[Gradient], interval:
 
 
 
-def plot_gradients(gradients: List[Gradient], interval: int, move: int, start_percent: float = 0, end_percent: float = 25):
+def plot_gradients(gradients: List[Gradient], interval: int, move: int,start_percent: float = 0, end_percent: float = 25,savevalue = False):
     gradient_values = [gradient.value for gradient in gradients]
     x_values = list(range(len(gradient_values)))
 
@@ -64,22 +64,38 @@ def plot_gradients(gradients: List[Gradient], interval: int, move: int, start_pe
     for i in range(start_index, end_index, move):
         if i + 1 < len(gradient_values):
             plt.plot([x_values[i], x_values[i + 1]], [gradient_values[i], gradient_values[i + 1]], 'r-')
-
+    if savevalue:
+        overlapping_part =[i for i in gradient_values[start_index:end_index]]
+        
     plt.xlabel('Point Index')
     plt.ylabel('Gradient Value')
     plt.legend()    
     plt.show()
+    return overlapping_part
 
+def save_mark_values(markpart:list, output_name:str, output_dir:str):
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)    
+    file_name = os.path.join(output_dir, f"{output_name}.csv")
+    with open(file_name, "w") as f:
+        for value in markpart:
+            f.writelines(value)
 
 # setting filepath intervel move and which part to which part  
 def main():
-    filepath = r'C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\find_pattern\overlapping\contourfiles\6000_clear.csv'
-    interval = 10
+    filepath = r'C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\find_pattern\overlapping\contourfiles\6050_clear.csv'
+    interval = 20
     move = 1
     points = read_contours(filepath)
     gradients = calculate_gradients(points, interval, move)
-    plot_mark_contours(points, gradients, interval, move,18,36)
-    plot_gradients(gradients, interval, move,18,36)
+    plot_mark_contours(points, gradients, interval, move,13,34)
+    part1 = plot_gradients(gradients, interval, move,13,34,savevalue=True)
+    # plot_mark_contours(points, gradients, interval, move,63,90)
+    # part2 = plot_gradients(gradients, interval, move,63,90,savevalue=True)
 
-if __name__ == "__main__":
-    main()
+    return part1 
+
+
+down = main()
+
+grad_to_csv(down,"6050_down.csv",r"C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\find_pattern\overlapping\overlapping_part\down")
