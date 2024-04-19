@@ -52,8 +52,8 @@ def output_gradvalue(gradlist: List[float],output_image_name: str,output_csv_nam
 
 
 def main():
-    targetdir = r'C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\find_pattern\overlapping\contourfiles'
-    output_dir = r'C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\find_pattern\overlapping\grad20_1'
+    targetdir = r'C:\Users\Lab_205\Desktop\rotated_overlapping\contourfiles'
+    output_dir = r'C:\Users\Lab_205\Desktop\rotated_overlapping\grad20_1'
     
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)

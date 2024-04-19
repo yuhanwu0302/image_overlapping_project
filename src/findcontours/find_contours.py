@@ -57,8 +57,8 @@ def get_all_file_paths(targetdir):
 
 
 def run():
-    targetdir = r'C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\find_pattern\overlapping\clear'
+    targetdir = r'C:\Users\Lab_205\Desktop\rotated_overlapping\clear'
     all_files = get_all_file_paths(targetdir)
     for file_path in all_files:
-        findcontours(file_path,r'C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\find_pattern\overlapping\contourfiles')
+        findcontours(file_path,r'C:\Users\Lab_205\Desktop\rotated_overlapping\clear\contourfiles')
 

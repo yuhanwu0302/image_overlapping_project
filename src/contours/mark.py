@@ -82,20 +82,22 @@ def save_mark_values(markpart:list, output_name:str, output_dir:str):
             f.writelines(value)
 
 # setting filepath intervel move and which part to which part  
-def main():
-    filepath = r'C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\find_pattern\overlapping\contourfiles\6050_clear.csv'
+def main(filepath,start,end):
+    filepath = filepath
     interval = 20
     move = 1
+    start = start
+    end = end
     points = read_contours(filepath)
     gradients = calculate_gradients(points, interval, move)
-    plot_mark_contours(points, gradients, interval, move,13,34)
-    part1 = plot_gradients(gradients, interval, move,13,34,savevalue=True)
+    plot_mark_contours(points, gradients, interval, move,start,end)
+    part1 = plot_gradients(gradients, interval, move,start,end,savevalue=True)
     # plot_mark_contours(points, gradients, interval, move,63,90)
     # part2 = plot_gradients(gradients, interval, move,63,90,savevalue=True)
 
     return part1 
 
 
-down = main()
+down = main(r'C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\find_pattern\5_true_indigo\contourfiles\1195_clear.csv',15,32)
 
-grad_to_csv(down,"6050_down.csv",r"C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\find_pattern\overlapping\overlapping_part\down")
+grad_to_csv(down,"6100_down.csv",r"C:\Users\Lab_205\Desktop\rotated_overlapping\contourfiles\down")

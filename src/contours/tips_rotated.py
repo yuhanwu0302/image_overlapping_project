@@ -1,12 +1,13 @@
 import numpy as np
 import glob
-import point
+import contours.point
 import cv2 as cv
 import matplotlib.pyplot as plt
 from scipy.interpolate import interp1d
 from contours.mark import plot_mark_contours,plot_gradients
 from contours.draw_contours import *
 import pandas as pd
+import contours.point
 del globals()['main']
 
 
@@ -117,10 +118,10 @@ def output_rotated_img_csv(output_csv_name:str,retaed_contour):
 
 #############################   run data    ######################
 def main():       
-    targetdir = r'C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\find_pattern\overlapping\contourfiles'
-    output_dir = r'C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\find_pattern\overlapping\contourfiles\all_correct'
+    targetdir = r'C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\find_pattern\5_true_indigo\contourfiles'
+    output_dir = r'C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\find_pattern\5_true_indigo\contourfiles\all_correct'
     
-    output_rotate_image_dir= r'C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\find_pattern\overlapping\contourfiles\all_correct'
+    output_rotate_image_dir= r'C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\find_pattern\5_true_indigo\contourfiles\all_correct\img'
 
     if not os.path.exists(output_rotate_image_dir):
         os.makedirs(output_rotate_image_dir)
@@ -133,7 +134,7 @@ def main():
         points = read_contours(csvfile)
         original_contours = np.array([(point.x, point.y) for point in points], dtype=np.float32)
         original_M = findCOM(csvfile)
-        original_points = [point.Point(x, y) for x, y in original_contours.tolist()]
+        original_points = [Point(x, y) for x, y in original_contours.tolist()]
         original_gradients = calculate_gradients(original_points)
         original_max_gradient = max([abs(g.value) for g in original_gradients])
         leaf_tip_candidate_index = [i for i, g in enumerate(original_gradients) if abs(g.value) == original_max_gradient]
@@ -151,7 +152,7 @@ def main():
 
         ###calculate rotated gradient###
 
-        adjusted_rotated_points=[point.Point(x, y) for x, y in clockwise]
+        adjusted_rotated_points=[Point(x, y) for x, y in clockwise]
         adjusted_rotated_grad = calculate_gradients(adjusted_rotated_points,20,1)
         gradient_values = [gradient.value for gradient in adjusted_rotated_grad]
         
