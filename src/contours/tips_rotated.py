@@ -158,7 +158,7 @@ def main():
         
         base_name = os.path.basename(csvfile)
         plotname, _ = os.path.splitext(base_name)
-
+        
         output_csv_name = os.path.join(output_dir, f"{plotname}.csv")
         output_image_name = os.path.join(output_dir, f"{plotname}.jpg")
         output_rotated_image_name = os.path.join(output_rotate_image_dir, f"{plotname}_rotated.jpg")
@@ -168,7 +168,9 @@ def main():
         output_rotated_img(rotaed_img,output_rotated_image_name)
         output_rotated_img_csv(output_rotated_csv_name,clockwise)
 
-
+        second_derivatives = calculate_second_derivatives(adjusted_rotated_grad,1)
+        second_derivative_values = [derivative.value for derivative in second_derivatives]
+        output_second_derivative(second_derivative_values, output_image_name, output_csv_name)
 
 
 '''check which part is which part
