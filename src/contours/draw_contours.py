@@ -83,8 +83,8 @@ def output_second_derivative(second_derivatives: List[float], output_image_name:
 
 
 def main():
-    targetdir = r'C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\find_pattern\5_true_indigo\contourfiles'
-    output_dir = r'C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\find_pattern\5_true_indigo\contourfiles\testoutput'
+    targetdir = r'C:\Users\baba\Desktop\image_overlapping_project\dataset_output\test_rotated_vs_unrotated\clear\contourfiles'
+    output_dir = r'C:\Users\baba\Desktop\image_overlapping_project\dataset_output\test_rotated_vs_unrotated\clear\contourfiles\grad_20'
 
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)

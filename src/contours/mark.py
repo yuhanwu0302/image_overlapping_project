@@ -3,7 +3,7 @@ import re
 import matplotlib.pyplot as plt
 from contours.point import Point, Gradient
 from typing import List
-from contours.draw_contours import calculate_gradients
+from contours.draw_contours import calculate_gradients ,calculate_second_derivatives
 from contours.output import grad_to_csv
 def read_contours(file):
     all_points = []
@@ -73,6 +73,33 @@ def plot_gradients(gradients: List[Gradient], interval: int, move: int,start_per
     plt.show()
     return overlapping_part
 
+def plot_second_derivatives(second_derivatives: List[float], interval: int, move: int, start_percent: float = 0, end_percent: float = 25, savevalue: bool = False):
+    x_values = list(range(len(second_derivatives)))
+
+    start_index = int(len(second_derivatives) * (start_percent / 100))
+    end_index = int(len(second_derivatives) * (end_percent / 100))
+
+    plt.figure()
+    plt.plot(x_values, second_derivatives, label='Second Derivative')
+
+    for i in range(start_index, end_index, move):
+        if i + 1 < len(second_derivatives):
+            plt.plot([x_values[i], x_values[i + 1]], [second_derivatives[i], second_derivatives[i + 1]], 'r-')
+
+    plt.xlabel('Point Index')
+    plt.ylabel('Second Derivative Value')
+    plt.legend()
+    plt.title(f"Second Derivative from {start_percent}% to {end_percent}%")
+    plt.show()
+
+    if savevalue:
+        overlapping_part = second_derivatives[start_index:end_index]
+        return overlapping_part
+    else:
+        return None
+
+
+
 def save_mark_values(markpart:list, output_name:str, output_dir:str):
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)    
@@ -94,10 +121,17 @@ def main(filepath,start,end):
     part1 = plot_gradients(gradients, interval, move,start,end,savevalue=True)
     # plot_mark_contours(points, gradients, interval, move,63,90)
     # part2 = plot_gradients(gradients, interval, move,63,90,savevalue=True)
+    second_gradient=calculate_second_derivatives(gradients, 1)
+    part1_second = plot_second_derivatives(second_gradient,1, move,start,end,savevalue=True)
+    
+    
+    
+    return part1 ,part1_second
 
-    return part1 
-
-
-down = main(r'C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\find_pattern\5_true_indigo\contourfiles\1195_clear.csv',15,32)
+down,down_second = main(r'C:\Users\baba\Desktop\image_overlapping_project\dataset_output\test_rotated_vs_unrotated\clear\contourfiles\1196_rotated.csv',40,55)
 
 grad_to_csv(down,"6100_down.csv",r"C:\Users\Lab_205\Desktop\rotated_overlapping\contourfiles\down")
+
+
+
+
