@@ -119,9 +119,9 @@ def output_rotated_img_csv(output_csv_name:str,retaed_contour):
 #############################   run data    ######################
 def main():       
     targetdir = r'C:\Users\baba\Desktop\image_overlapping_project\dataset_output\test_rotated_vs_unrotated\clear\contourfiles'
-    output_dir = r'C:\Users\baba\Desktop\image_overlapping_project\dataset_output\test_rotated_vs_unrotated\clear\contourfiles\new'
+    output_dir = r'C:\Users\baba\Desktop\image_overlapping_project\dataset_output\test_rotated_vs_unrotated\clear\contourfiles\new1'
     
-    output_rotate_image_dir= r'C:\Users\baba\Desktop\image_overlapping_project\dataset_output\test_rotated_vs_unrotated\clear\contourfiles\new\img'
+    output_rotate_image_dir= r'C:\Users\baba\Desktop\image_overlapping_project\dataset_output\test_rotated_vs_unrotated\clear\contourfiles\new1\img'
 
     if not os.path.exists(output_rotate_image_dir):
         os.makedirs(output_rotate_image_dir)
@@ -146,7 +146,7 @@ def main():
         leaf_tip = leaf_tip.x,leaf_tip.y
 
         angle = calculate_rotation_angle(leaf_tip,original_M)
-        rotated = rotate_contour(original_contours,angle,original_M)
+        rotated = rotate_contour(original_contours,angle+90,original_M)
         adjusted_rotated = adjust_contour_position(rotated)
         clockwise = top_and_clockwise(adjusted_rotated)
 
@@ -169,7 +169,7 @@ def main():
         output_rotated_img_csv(output_rotated_csv_name,clockwise)
 
         second_derivatives = calculate_second_derivatives(adjusted_rotated_grad,1)
-        second_derivative_values = [derivative.value for derivative in second_derivatives]
+        second_derivative_values = [derivative for derivative in second_derivatives]
         output_second_derivative(second_derivative_values, output_image_name, output_csv_name)
 
 
