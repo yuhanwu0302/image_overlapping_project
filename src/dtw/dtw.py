@@ -201,15 +201,15 @@ def plot_kde_and_CI(title:str,values,CI:int, compare_n_values=0 ,compare=False):
 
 def temp_run(leaf1_num):
     for _ in tqdm(range(1)):
-        leaf_names=["overlapping"]
-        grad_rotates =["grad20_1"]
-        selected_ids1 = [str(id) + "_clear" for id in list(range(6000, 6101))]
+        leaf_names=["clear"]
+        grad_rotates =["new"]
+        selected_ids1 = [str(id) + "_clear_grad" for id in list(range(1195, 1205))]
         # selected_ids2 = [str(id) + "_clear" for id in list(range(1324, 1330))]
         # select_id_lists = [selected_ids1,selected_ids2]
         select_id_lists=[selected_ids1]
         all_results = {}
         for leaf_name,grad_rotate,selected_ids in zip(leaf_names,grad_rotates,select_id_lists):
-                        image_path = fr"../../dataset_output/find_pattern/{leaf_name}/contourfiles/grad/{grad_rotate}/" 
+                        image_path = fr"../../dataset_output/test_rotated_vs_unrotated/{leaf_name}/contourfiles/grad/{grad_rotate}/" 
                         result = run(leaf_name,grad_rotate,image_path,selected_ids)
                         
                         key = f"{leaf_name}_{grad_rotate}"
@@ -248,4 +248,4 @@ def temp_run(leaf1_num):
     dis_list = leaf1_dis
     plot_kde_and_CI(f'diff_{len(diff_dis)}',dis_list,0.95,compare_n_values=len(diff_dis),compare=False)
 
-temp_run(100)
+temp_run(10)

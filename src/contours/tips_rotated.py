@@ -111,17 +111,19 @@ def top_and_clockwise(contour):
 def output_rotated_img(img,output_rotated_image_name:str,):
     cv.imwrite(f"{output_rotated_image_name}",img)
 
-def output_rotated_img_csv(output_csv_name:str,retaed_contour):
-    df = pd.DataFrame(retaed_contour)
-    df.to_csv(output_csv_name, index=False,encoding="utf-8",header=False)
+def output_rotated_img_csv(output_csv_name: str, rotated_contour):
+    with open(output_csv_name, "w") as f:
+        for point in rotated_contour:
+            formatted_point = "[" + " ".join(map(str, point)) + "],"
+            f.write(formatted_point + "\n")
     
 
 #############################   run data    ######################
 def main():       
     targetdir = r'C:\Users\baba\Desktop\image_overlapping_project\dataset_output\test_rotated_vs_unrotated\clear\contourfiles'
-    output_dir = r'C:\Users\baba\Desktop\image_overlapping_project\dataset_output\test_rotated_vs_unrotated\clear\contourfiles\new1'
+    output_dir = r'C:\Users\baba\Desktop\image_overlapping_project\dataset_output\test_rotated_vs_unrotated\clear\contourfiles\new'
     
-    output_rotate_image_dir= r'C:\Users\baba\Desktop\image_overlapping_project\dataset_output\test_rotated_vs_unrotated\clear\contourfiles\new1\img'
+    output_rotate_image_dir= r'C:\Users\baba\Desktop\image_overlapping_project\dataset_output\test_rotated_vs_unrotated\clear\contourfiles\new\img'
 
     if not os.path.exists(output_rotate_image_dir):
         os.makedirs(output_rotate_image_dir)
@@ -146,7 +148,7 @@ def main():
         leaf_tip = leaf_tip.x,leaf_tip.y
 
         angle = calculate_rotation_angle(leaf_tip,original_M)
-        rotated = rotate_contour(original_contours,angle+90,original_M)
+        rotated = rotate_contour(original_contours,angle,original_M)
         adjusted_rotated = adjust_contour_position(rotated)
         clockwise = top_and_clockwise(adjusted_rotated)
 
@@ -159,73 +161,18 @@ def main():
         base_name = os.path.basename(csvfile)
         plotname, _ = os.path.splitext(base_name)
         
-        output_csv_name = os.path.join(output_dir, f"{plotname}.csv")
         output_image_name = os.path.join(output_dir, f"{plotname}.jpg")
+        output_grad_name= os.path.join(output_dir, f"{plotname}_grad.csv")
+        output_grad_second_name= os.path.join(output_dir, f"{plotname}_grad_second.csv")
         output_rotated_image_name = os.path.join(output_rotate_image_dir, f"{plotname}_rotated.jpg")
-        output_rotated_csv_name = os.path.join(output_rotate_image_dir, f"{plotname}_rotated.csv")
-        output_gradvalue(gradient_values, output_image_name, output_csv_name)
+        output_rotated_csv_name = os.path.join(output_rotate_image_dir, f"{plotname}_rotated_contourfiles.csv")
+        
+        output_gradvalue(gradient_values, output_image_name, output_grad_name)
         rotaed_img = draw(clockwise)
         output_rotated_img(rotaed_img,output_rotated_image_name)
         output_rotated_img_csv(output_rotated_csv_name,clockwise)
 
         second_derivatives = calculate_second_derivatives(adjusted_rotated_grad,1)
         second_derivative_values = [derivative for derivative in second_derivatives]
-        output_second_derivative(second_derivative_values, output_image_name, output_csv_name)
-
-
-'''check which part is which part
-interval = 10
-move = 1
-points = adjusted_rotated_points
-gradients = adjusted_rotated_grad
-plot_mark_contours(points, gradients, interval, move,70,80)
-plot_gradients(gradients, interval, move,70,80)
-'''
-
-
-
-'''
-# 查看原本輪廓與翻轉後的輪廓
-rotated_contour_image = draw(adjusted_rotated)
-original_contour_image = draw(original_contours)
-rotated_contour_image = draw(clockwise)
-cv.imshow('Original Contour', original_contour_image)
-cv.imshow('Rotated Contour', rotated_contour_image)
-cv.waitKey(0)
-cv.destroyAllWindows()
-'''
-
-
-'''
-# 查看輪廓 之後可以import dynamic.py
-def run(contours):
-    
-    plt.ion()
-    fig, ax = plt.subplots()
-    ax.set_xlim(0, 600)
-    ax.set_ylim(0, 800)
-    ax.invert_yaxis()
-    # 定义按键响应函数
-    def on_press(event):
-        if event.key == 'escape':  # 如果按下的是 Esc 键
-            plt.close(fig)  # 关闭图表窗口
-
-    # 将按键事件与处理函数绑定
-    fig.canvas.mpl_connect('key_press_event', on_press)
-
-    # 逐点绘制轮廓
-    for i in range(len(contours)):
-        x, y = clockwise[i, 0], clockwise[i, 1]
-        ax.scatter(x, y)
-        plt.pause(0.000001)
-        if not plt.fignum_exists(fig.number):  # 如果图表已关闭，则结束循环
-            break
-
-    plt.ioff()
-    if plt.fignum_exists(fig.number):
-        plt.show()
-
-run(clockwise)
-'''
-
+        output_second_derivative(second_derivative_values, output_image_name, output_grad_second_name)
 
