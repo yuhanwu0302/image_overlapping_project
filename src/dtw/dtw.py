@@ -29,7 +29,7 @@ def run(leaf_name, grad_rotate, dir,selected_ids):
     all_gradient_dict[rf"{leaf_name}_{grad_rotate}"] = gradient_dict
     selected_leaves_grads = [rf"{leaf_name}_{grad_rotate}"]
     pair_dist = calculate_pairwise_dist(all_gradient_dict, selected_leaves_grads, selected_ids)
-
+    
     return pair_dist
 
 def get_all_csv_path(image_path):    
@@ -77,19 +77,6 @@ def dis(grad_1, grad_2):
 def pairing_point(grad_1, grad_2):
     _ ,match = fastdtw(grad_1, grad_2,dist=euclidean)
     return match
-
-#     # for pytest
-#     # file_list = ["f1.csv", "f2.csv"]
-# gradient_dict = get_all_gradients(file_list) # get all gradients from these files {"image_id": gradient[]}
-
-
-#     # for pytest
-#     # gradient_dict = {
-#     #            "image_id_1": [1,2,3], 
-#     #            "image_id_2": [2,4,6,7,9]
-#     #}
-# selected_ids = [""]
-# pair_dist = calculate_pairwise_dist(gradient_dict) #  
 
 
 ########## plot  ##########
@@ -198,54 +185,105 @@ def plot_kde_and_CI(title:str,values,CI:int, compare_n_values=0 ,compare=False):
 
 # temp_run(73,3)
 
+################################
+# def temp_run():
+#     for _ in tqdm(range(1)):
+#         leaf_names=["overlapping_1"]
+#         grad_rotates =["down"]
+#         selected_ids1 = [str(id) + "_down" for id in list(range(7001, 7031))]
+#         # selected_ids2 = [str(id) + "_clear" for id in list(range(1324, 1330))]
+#         # select_id_lists = [selected_ids1,selected_ids2]
+#         select_id_lists=[selected_ids1]
+#         all_results = {}
+#         for leaf_name,grad_rotate,selected_ids in zip(leaf_names,grad_rotates,select_id_lists):
+#                         image_path = fr"../../dataset_output/find_pattern/{leaf_name}/contourfiles/grad/{grad_rotate}/" 
+#                         result = run(leaf_name,grad_rotate,image_path,selected_ids)
+                        
+#                         key = f"{leaf_name}_{grad_rotate}"
+#                         all_results[key] = result
 
-def temp_run(leaf1_num):
+#     df = pd.DataFrame(all_results['overlapping_1_down'])
+    
+#     total_num = df.shape[0]
+#     temp = np.zeros((total_num,total_num))
+
+#     index = 0
+#     for i in range(total_num):
+#         for j in range(total_num):
+#             temp[i,j] = df.iloc[i,j]
+#             index += 1
+
+#     # leaf1_self_dis
+#     leaf1_dis = []  
+#     for i in range(0,leaf1_num):
+#         for j in range(i+1,leaf1_num):
+#             leaf1_dis.append(temp[i,j])
+
+#     #leaf2_self_dis
+#     leaf2_dis = []
+#     for i in range(leaf1_num,):
+#         for j in range(i+1,total_num):
+#             leaf2_dis.append(temp[i,j])
+#     # difference leaf dis 
+#     diff_dis = []
+#     for i in range(0,leaf1_num):
+#         for j in range(leaf1_num,total_num):
+#             diff_dis.append(temp[i,j])
+
+#     dis_list=[]
+#     dis_list = leaf1_dis
+#     plot_kde_and_CI(f'diff_{len(diff_dis)}',dis_list,0.95,compare_n_values=len(diff_dis),compare=False)
+
+# temp_run(10)
+
+
+def temp_run():
     for _ in tqdm(range(1)):
-        leaf_names=["clear"]
-        grad_rotates =["new"]
-        selected_ids1 = [str(id) + "_clear_grad" for id in list(range(1195, 1205))]
+        leaf_names=["overlapping_1"]
+        grad_rotates =["down"]
+        selected_ids1 = [str(id) + "_down" for id in list(range(7001, 7031))]
         # selected_ids2 = [str(id) + "_clear" for id in list(range(1324, 1330))]
         # select_id_lists = [selected_ids1,selected_ids2]
         select_id_lists=[selected_ids1]
         all_results = {}
         for leaf_name,grad_rotate,selected_ids in zip(leaf_names,grad_rotates,select_id_lists):
-                        image_path = fr"../../dataset_output/test_rotated_vs_unrotated/{leaf_name}/contourfiles/grad/{grad_rotate}/" 
+                        image_path = fr"../../dataset_output/find_pattern/{leaf_name}/contourfiles/grad/{grad_rotate}/" 
                         result = run(leaf_name,grad_rotate,image_path,selected_ids)
                         
                         key = f"{leaf_name}_{grad_rotate}"
                         all_results[key] = result
 
-    df = pd.DataFrame(all_results['overlapping_grad20_1'])
+    df = pd.DataFrame(all_results['overlapping_1_down'])
+
+    return df
+
+df = temp_run()
+smallest_value = df["overlapping_1_down_7001_down"].nsmallest(2).iloc[-1]
+row_name1 = df[df["overlapping_1_down_7001_down"] == smallest_value].index[0]
 
 
-    total_num = df.shape[0]
-    temp = np.zeros((total_num,total_num))
+def temp_run1():
+    for _ in tqdm(range(1)):
+        leaf_names=["overlapping_1"]
+        grad_rotates =["down"]
+        selected_ids1 = [str(id) + "_second_down" for id in list(range(7001, 7031))]
+        # selected_ids2 = [str(id) + "_clear" for id in list(range(1324, 1330))]
+        # select_id_lists = [selected_ids1,selected_ids2]
+        select_id_lists=[selected_ids1]
+        all_results = {}
+        for leaf_name,grad_rotate,selected_ids in zip(leaf_names,grad_rotates,select_id_lists):
+                        image_path = fr"../../dataset_output/find_pattern/{leaf_name}/contourfiles/grad/{grad_rotate}/second/" 
+                        result = run(leaf_name,grad_rotate,image_path,selected_ids)
+                        
+                        key = f"{leaf_name}_{grad_rotate}"
+                        all_results[key] = result
 
-    index = 0
-    for i in range(total_num):
-        for j in range(total_num):
-            temp[i,j] = df.iloc[i,j]
-            index += 1
+    df = pd.DataFrame(all_results['overlapping_1_down'])
 
-    # leaf1_self_dis
-    leaf1_dis = []  
-    for i in range(0,leaf1_num):
-        for j in range(i+1,leaf1_num):
-            leaf1_dis.append(temp[i,j])
+    return df
 
-    #leaf2_self_dis
-    leaf2_dis = []
-    for i in range(leaf1_num,):
-        for j in range(i+1,total_num):
-            leaf2_dis.append(temp[i,j])
-    # difference leaf dis 
-    diff_dis = []
-    for i in range(0,leaf1_num):
-        for j in range(leaf1_num,total_num):
-            diff_dis.append(temp[i,j])
-
-    dis_list=[]
-    dis_list = leaf1_dis
-    plot_kde_and_CI(f'diff_{len(diff_dis)}',dis_list,0.95,compare_n_values=len(diff_dis),compare=False)
-
-temp_run(10)
+df_second = temp_run1()
+#save this data frame
+df_second.to_csv("second_down_data.csv")
+second_smallest_value = df_second["overlapping_1_down_7001_second_down"].nsmallest(2).iloc[-1]
+row_name2 = df_second[df_second["overlapping_1_down_7001_second_down"] == second_smallest_value].index[0]

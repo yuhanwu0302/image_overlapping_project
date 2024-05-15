@@ -16,7 +16,7 @@ def read_contours(file):
                 all_points.append(p)
     return all_points
 
-def plot_mark_contours(points: List[Point], gradients: List[Gradient], interval: int, move: int, start_percent: float = 0, end_percent: float = 25):
+def plot_mark_contours(points: List[Point], gradients: List[Gradient], start_percent: float = 0, end_percent: float = 25):
     x = [point.x for point in points]
     y = [point.y for point in points]
     
@@ -27,11 +27,11 @@ def plot_mark_contours(points: List[Point], gradients: List[Gradient], interval:
     start_gradient_index = int(num_gradients * (start_percent / 100))
     end_gradient_index = int(num_gradients * (end_percent / 100))
     
-    start_point_index = start_gradient_index * move
-    end_point_index = (end_gradient_index * move + interval) % len(points)
+    start_point_index = start_gradient_index
+    end_point_index = end_gradient_index
 
-    for i in range(start_point_index, end_point_index, move):
-        plt.plot([points[i].x, points[(i + interval) % len(points)].x], [points[i].y, points[(i + interval) % len(points)].y], 'r-')
+    for i in range(start_point_index, end_point_index):
+        plt.plot([points[i].x, points[(i + 1) % len(points)].x], [points[i].y, points[(i + 1) % len(points)].y], 'r-')
 
     plt.xlim(0, 800)
     plt.ylim(600, 0)
@@ -46,12 +46,11 @@ def plot_mark_contours(points: List[Point], gradients: List[Gradient], interval:
     plt.show()
 
 
-    plt.show()
 
 
 
 
-def plot_gradients(gradients: List[Gradient], interval: int, move: int,start_percent: float = 0, end_percent: float = 25,savevalue = False):
+def plot_gradients(gradients: List[Gradient], start_percent: float = 0, end_percent: float = 25, savevalue=False):
     gradient_values = [gradient.value for gradient in gradients]
     x_values = list(range(len(gradient_values)))
 
@@ -61,19 +60,26 @@ def plot_gradients(gradients: List[Gradient], interval: int, move: int,start_per
     plt.figure()
     plt.plot(x_values, gradient_values, label='Gradient')
 
-    for i in range(start_index, end_index, move):
+    for i in range(start_index, end_index):
         if i + 1 < len(gradient_values):
             plt.plot([x_values[i], x_values[i + 1]], [gradient_values[i], gradient_values[i + 1]], 'r-')
-    if savevalue:
-        overlapping_part =[i for i in gradient_values[start_index:end_index]]
-        
+               
     plt.xlabel('Point Index')
     plt.ylabel('Gradient Value')
     plt.legend()    
     plt.show()
-    return overlapping_part
+    
+    if savevalue:
+        if start_index < 0:
+            overlapping_part =gradient_values[start_index:]+gradient_values[:end_index]
+        else:
+            overlapping_part = gradient_values[start_index:end_index]
+        return overlapping_part
+    else:
+        return None
+    
 
-def plot_second_derivatives(second_derivatives: List[float], interval: int, move: int, start_percent: float = 0, end_percent: float = 25, savevalue: bool = False):
+def plot_second_derivatives(second_derivatives: List[float], start_percent: float = 0, end_percent: float = 25, savevalue: bool = False):
     x_values = list(range(len(second_derivatives)))
 
     start_index = int(len(second_derivatives) * (start_percent / 100))
@@ -82,7 +88,7 @@ def plot_second_derivatives(second_derivatives: List[float], interval: int, move
     plt.figure()
     plt.plot(x_values, second_derivatives, label='Second Derivative')
 
-    for i in range(start_index, end_index, move):
+    for i in range(start_index, end_index):
         if i + 1 < len(second_derivatives):
             plt.plot([x_values[i], x_values[i + 1]], [second_derivatives[i], second_derivatives[i + 1]], 'r-')
 
@@ -93,10 +99,15 @@ def plot_second_derivatives(second_derivatives: List[float], interval: int, move
     plt.show()
 
     if savevalue:
-        overlapping_part = second_derivatives[start_index:end_index]
+        if start_index < 0:
+            overlapping_part=second_derivatives[start_index:]+second_derivatives[:end_index]
+        else:
+            overlapping_part = second_derivatives[start_index:end_index]
         return overlapping_part
+    
     else:
         return None
+
 
 
 
@@ -117,21 +128,22 @@ def main(filepath,start,end):
     end = end
     points = read_contours(filepath)
     gradients = calculate_gradients(points, interval, move)
-    plot_mark_contours(points, gradients, interval, move,start,end)
-    part1 = plot_gradients(gradients, interval, move,start,end,savevalue=True)
+    plot_mark_contours(points, gradients,start,end)
+    part1 = plot_gradients(gradients,start,end,savevalue=True)
     # plot_mark_contours(points, gradients, interval, move,63,90)
     # part2 = plot_gradients(gradients, interval, move,63,90,savevalue=True)
-    second_gradient=calculate_second_derivatives(gradients, 1)
-    part1_second = plot_second_derivatives(second_gradient,1, move,start,end,savevalue=True)
+    second_derivatives=calculate_second_derivatives(gradients, 1)
+    part1_second = plot_second_derivatives(second_derivatives,start,end,savevalue=True)
+    
     
     
     
     return part1 ,part1_second
-
-down,down_second = main(r'C:\Users\baba\Desktop\image_overlapping_project\dataset_output\test_rotated_vs_unrotated\clear\contourfiles\1196_rotated.csv',40,55)
-
-grad_to_csv(down,"6100_down.csv",r"C:\Users\Lab_205\Desktop\rotated_overlapping\contourfiles\down")
-
-
+ 
+# down,down_second = main(r'C:\Users\Lab_205\Desktop\overlapping_1\clear\contourfiles\7027_clear.csv',10,50)
+# len(down_second)
+# down
+# grad_to_csv(down,"70311_down",r"C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\find_pattern\overlapping_1\contourfiles\grad\down")
+# grad_to_csv(down_second,"70311_second_down",r"C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\find_pattern\overlapping_1\contourfiles\grad\down")
 
 

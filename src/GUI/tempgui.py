@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import filedialog, messagebox
+from tkinter import filedialog, messagebox, ttk
 from PIL import Image, ImageTk
 import csv
 
@@ -13,25 +13,28 @@ class ImageRotator:
         self.canvas = tk.Canvas(self.master, width=512, height=512, bg="white")
         self.canvas.pack(side=tk.LEFT)
 
-        self.open_button = tk.Button(self.master, text="Open", command=self.open_file)
+        self.side_frame = tk.Frame(self.master)
+        self.side_frame.pack(side=tk.RIGHT, padx=10, pady=10)
+
+        self.open_button = tk.Button(self.side_frame, text="Open", command=self.open_file)
         self.open_button.pack()
 
-        self.save_button = tk.Button(self.master, text="Save", command=self.save_rotated_image)
+        self.save_button = tk.Button(self.side_frame, text="Save", command=self.save_rotated_image)
         self.save_button.pack()
         
-        self.rotation_entry = tk.Entry(self.master)
+        self.rotation_entry = tk.Entry(self.side_frame)
         self.rotation_entry.pack()
         
-        self.rotate_button = tk.Button(self.master, text="Rotate", command=self.rotate_by_entry)
+        self.rotate_button = tk.Button(self.side_frame, text="Rotate", command=self.rotate_by_entry)
         self.rotate_button.pack()
 
-        self.position_button = tk.Button(self.master, text="Track Position", command=self.toggle_position_tracking)
+        self.position_button = tk.Button(self.side_frame, text="Track Position", command=self.toggle_position_tracking)
         self.position_button.pack()
         
         self.position_tracking = False
         self.clicked_marker = None
         
-        self.position_label = tk.Label(self.master, text="Position on canvas: x:  y: ")
+        self.position_label = tk.Label(self.side_frame, text="Position on canvas: x:  y: ")
         self.position_label.pack()
 
         self.image = None
@@ -42,17 +45,17 @@ class ImageRotator:
         self.contour_id = None  # 存储轮廓的ID
 
         # 添加加载葉片輪廓文件的选项
-        self.select_points_button = tk.Button(self.master, text="Select Points", command=self.toggle_select_points)
+        self.select_points_button = tk.Button(self.side_frame, text="Select Points", command=self.toggle_select_points)
         self.select_points_button.pack()
         self.select_points_mode = False
         self.selected_points = []
 
         # 添加保存位点的按钮
-        self.save_points_button = tk.Button(self.master, text="Save Points", command=self.save_points_between_selected)
+        self.save_points_button = tk.Button(self.side_frame, text="Save Points", command=self.save_points_between_selected)
         self.save_points_button.pack()
         self.save_points_button.config(state=tk.DISABLED)  # 初始状态下按钮不可用
 
-                # 轮廓点列表窗口
+        # 轮廓点列表窗口
         self.contour_window = tk.Toplevel(self.master)
         self.contour_window.title("Contour Points")
 
@@ -79,7 +82,7 @@ class ImageRotator:
         file_menu.add_cascade(label="Remove Background", menu=remove_background_menu)
 
         # 添加加载葉片輪廓文件的选项
-        file_menu.add_command(label="Load Contour", command=self.load_contour_and_show_window)
+        file_menu.add_command(label="Load Contour", command=self.load_contour)
 
         menubar.add_cascade(label="File", menu=file_menu)
 
@@ -171,21 +174,6 @@ class ImageRotator:
             else:
                 messagebox.showinfo("Background Removed", f"Background removed successfully for images in {folder_path}")
 
-    def update_contour_list(self):
-        self.contour_list.delete(0, tk.END)
-        for index, point in enumerate(self.coordinates, start=1):
-            self.contour_list.insert(tk.END, f"Point {index}: ({point[0]}, {point[1]})")
-    
-    def select_contour_point(self, event):
-        # 获取所选点的索引
-        selected_index = self.contour_list.curselection()
-        if selected_index:
-            index = selected_index[0]
-            self.canvas.delete("selected_point")  # 删除之前的选定点
-            x, y = self.coordinates[index]
-            self.canvas.create_oval(x - 3, y - 3, x + 3, y + 3, fill="red", tags="selected_point")  # 在画布上绘制红色选定点
-            self.canvas.coords(self.clicked_marker, x - 3, y - 3, x + 3, y + 3)  # 更新主画布上的选定点位置
-
     def toggle_select_points(self):
         # 切换选择位点的模式
         self.select_points_mode = not self.select_points_mode
@@ -218,12 +206,12 @@ class ImageRotator:
             return False
         return self.canvas.find_overlapping(x, y, x, y) == (self.contour_id,)
 
-    def load_contour_and_show_window(self):
+    def load_contour(self):
         filename = filedialog.askopenfilename(filetypes=[("CSV files", "*.csv")])
         if filename:
             self.coordinates = self.load_coordinates(filename)
             self.draw_contour()
-            self.show_contour_window()
+            self.update_contour_list()
 
     def load_coordinates(self, filename):
         coordinates = []
@@ -239,6 +227,53 @@ class ImageRotator:
         if self.coordinates:
             self.canvas.delete("contour")  # 清除之前的輪廓
             self.contour_id = self.canvas.create_line(self.coordinates, fill="green", width=2, tags="contour")  # 繪製新輪廓
+
+    def update_contour_list(self):
+        self.contour_list.delete(0, tk.END)
+        for index, point in enumerate(self.coordinates, start=1):
+            self.contour_list.insert(tk.END, f"Point {index}: ({point[0]}, {point[1]})")
+
+    def select_contour_point(self, event):
+        # 获取所选点的索引
+        selected_index = self.contour_list.curselection()
+        if selected_index:
+            index = selected_index[0]
+            self.canvas.delete("selected_point")
+            x, y = self.coordinates[index]
+            self.canvas.create_oval(x - 3, y - 3, x + 3, y + 3, fill="red", tags="selected_point")
+
+    def toggle_position_tracking(self):
+        # 切换位置追踪功能
+        self.position_tracking = not self.position_tracking
+        if self.position_tracking:
+            self.position_button.config(text="Stop Tracking Position")
+            self.canvas.bind("<Motion>", self.show_position)
+        else:
+            self.position_button.config(text="Track Position")
+            self.canvas.unbind("<Motion>")
+            self.canvas.delete("current_position")
+            self.position_label.config(text="Position on canvas: x:  y: ")
+
+    def select_point(self, event):
+        # 记录选定的点
+        x, y = event.x, event.y
+        self.selected_points.append((x, y))
+        self.canvas.create_oval(x - 3, y - 3, x + 3, y + 3, fill="blue", tags="selected_point")
+        if len(self.selected_points) == 2:
+            self.toggle_select_points()
+            self.save_points_between_selected()
+    
+    def save_points_between_selected(self):
+        if len(self.selected_points) == 2:
+            # 提示用户选择保存文件的位置
+            filename = filedialog.asksaveasfilename(defaultextension=".csv", filetypes=[("CSV files", "*.csv")])
+            if filename:
+                with open(filename, "w", newline="") as file:
+                    writer = csv.writer(file)
+                    for point in self.coordinates:
+                        if self.is_inside_selection(point):
+                            writer.writerow(point)
+
 
     def show_contour_window(self):
         if self.contour_window:
@@ -299,53 +334,6 @@ class ImageRotator:
                         if min_x <= point[0] <= max_x and min_y <= point[1] <= max_y:
                             writer.writerow(point)
 
-    def toggle_select_points(self):
-        # 切换选择位点的模式
-        self.select_points_mode = not self.select_points_mode
-        if self.select_points_mode:
-            self.select_points_button.config(text="Stop Selecting Points")
-            self.canvas.bind("<Button-1>", self.select_point)
-        else:
-            self.select_points_button.config(text="Select Points")
-            self.canvas.unbind("<Button-1>")
-            self.canvas.delete("selected_point")
-            # 更新保存按钮状态
-            if len(self.selected_points) == 2:
-                self.save_points_button.config(state=tk.NORMAL)
-            else:
-                self.save_points_button.config(state=tk.DISABLED)
-
-    def toggle_position_tracking(self):
-        # 切换位置追踪功能
-        self.position_tracking = not self.position_tracking
-        if self.position_tracking:
-            self.position_button.config(text="Stop Tracking Position")
-            self.canvas.bind("<Motion>", self.show_position)
-        else:
-            self.position_button.config(text="Track Position")
-            self.canvas.unbind("<Motion>")
-            self.canvas.delete("current_position")
-            self.position_label.config(text="Position on canvas: x:  y: ")
-
-    def select_point(self, event):
-        # 记录选定的点
-        x, y = event.x, event.y
-        self.selected_points.append((x, y))
-        self.canvas.create_oval(x - 3, y - 3, x + 3, y + 3, fill="blue", tags="selected_point")
-        if len(self.selected_points) == 2:
-            self.toggle_select_points()
-            self.save_points_between_selected()
-    
-    def save_points_between_selected(self):
-        if len(self.selected_points) == 2:
-            # 提示用户选择保存文件的位置
-            filename = filedialog.asksaveasfilename(defaultextension=".csv", filetypes=[("CSV files", "*.csv")])
-            if filename:
-                with open(filename, "w", newline="") as file:
-                    writer = csv.writer(file)
-                    for point in self.coordinates:
-                        if self.is_inside_selection(point):
-                            writer.writerow(point)
 
     def is_inside_selection(self, point):
         # 检查一个点是否在所选区域内
