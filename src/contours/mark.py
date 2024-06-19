@@ -132,18 +132,19 @@ def main(filepath,start,end):
     part1 = plot_gradients(gradients,start,end,savevalue=True)
     # plot_mark_contours(points, gradients, interval, move,63,90)
     # part2 = plot_gradients(gradients, interval, move,63,90,savevalue=True)
-    second_derivatives=calculate_second_derivatives(gradients, 1)
-    part1_second = plot_second_derivatives(second_derivatives,start,end,savevalue=True)
+    #second_derivatives=calculate_second_derivatives(gradients, 1)
+    #part1_second = plot_second_derivatives(second_derivatives,start,end,savevalue=True)
     
     
     
     
-    return part1 ,part1_second
+    return part1 #,down_second  
  
-# down,down_second = main(r'C:\Users\Lab_205\Desktop\overlapping_1\clear\contourfiles\7027_clear.csv',10,50)
-# len(down_second)
-# down
-# grad_to_csv(down,"70311_down",r"C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\find_pattern\overlapping_1\contourfiles\grad\down")
-# grad_to_csv(down_second,"70311_second_down",r"C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\find_pattern\overlapping_1\contourfiles\grad\down")
+down = main(r'C:\Users\Lab_205\Desktop\overlapping\1-overlapping_image\clear\contourfiles\7015_overlapping_clear.csv',9,63)
+
+grad_to_csv(down,"7015_down",r"C:\Users\Lab_205\Desktop\overlapping\1-overlapping_image\clear\contourfiles\down")
+
+
+grad_to_csv(down_second,"70311_second_down",r"C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\find_pattern\overlapping_1\contourfiles\grad\down")
 
 
