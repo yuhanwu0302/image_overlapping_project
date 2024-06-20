@@ -5,6 +5,7 @@ from fastdtw import fastdtw
 from scipy.spatial.distance import euclidean
 from tqdm.auto import tqdm
 import matplotlib.pyplot as plt
+import os
 from concurrent.futures import ProcessPoolExecutor
 
 def dtw_distance(segment, subsequence, radius):
@@ -19,7 +20,7 @@ def process_subsequence(start_index, segment, full_sequence, length, radius):
     distance = dtw_distance(segment, subsequence, radius)
     return distance, start_index, end_index
 
-def find_best_match_variable_length(segment, full_sequence, range_percentage=0.1, radius=3,outputid="", n_jobs=16):  # Reduce n_jobs
+def find_best_match_variable_length(segment, full_sequence, range_percentage=0.1, radius=3, step = 3, n_jobs=16):  # Reduce n_jobs
         
     segment_length = len(segment)
     min_length = int(segment_length * (1 - range_percentage))
@@ -35,7 +36,7 @@ def find_best_match_variable_length(segment, full_sequence, range_percentage=0.1
         best_end_index = -1
         
         with ProcessPoolExecutor(max_workers=n_jobs) as executor:
-            futures = [executor.submit(process_subsequence, start_index, segment, full_sequence, length, radius) for start_index in range(full_length)]
+            futures = [executor.submit(process_subsequence, start_index, segment, full_sequence, length, radius) for start_index in range(0, full_length, step)]
             results_list = [future.result() for future in futures]
         
         for distance, start_index, end_index in results_list:
@@ -66,23 +67,33 @@ def find_best_match_variable_length(segment, full_sequence, range_percentage=0.1
 if __name__ == '__main__':
     
  ###### step 3   
-    for j in range(7011,7016):
-        segment = pd.read_csv(fr'C:\Users\Lab_205\Desktop\overlapping\1-overlapping_image\clear\contourfiles\down\\{j}_down.csv').values.reshape(-1, 1)
-                            #7000 ~7073 
+    base_path = os.path.dirname(__file__)  
+    segment_path = os.path.join(base_path, 'segment')
+    reference_path = os.path.join(base_path, 'reference_grad_20')
+    
+    for j in range(7019, 7073):
+        segment_file = os.path.join(segment_path, f'{j}_down.csv')
+        segment = pd.read_csv(segment_file).values.reshape(-1, 1)
+        
         for i in tqdm(range(7000, 7073), desc="Processing files"):
-            reference = pd.read_csv(rf'C:\\Users\\Lab_205\\Desktop\\image_overlapping_project\\dataset_output\\find_pattern\\overlapping_1\\contourfiles\\grad_20\\{i}_clear_gradient.csv').values.reshape(-1, 1)
+            if i == j:
+                continue
+            reference_file = os.path.join(reference_path, f'{i}_clear_gradient.csv')
+            reference = pd.read_csv(reference_file).values.reshape(-1, 1)
 
-            results_df, distances_record_df = find_best_match_variable_length(segment, reference, range_percentage=0.1, radius=3,outputid=f"{j}_{i}", n_jobs=16)
+            results_df, distances_record_df = find_best_match_variable_length(segment, reference, range_percentage=0.1, radius=3, step=3, n_jobs=16)
+            
+            output_folder = os.path.join(base_path, str(j))
+            if not os.path.exists(output_folder):
+                os.makedirs(output_folder)
 
-            # print(results_df)
             plt.plot(results_df['size'], results_df['distance'])
             plt.xlabel('Size')
             plt.ylabel('DTW distance')
             plt.title(f'DTW distance vs. Size {j} vs {i} search radius=3')
-            plt.savefig(fr'C:\Users\Lab_205\Desktop\overlapping\{j}\{j}{i}_search_radius_3.png')
-            # plt.show()
-            results_df.to_csv(fr'C:\Users\Lab_205\Desktop\overlapping\{j}\{j}_{i}.csv', index=False)
+            plt.savefig(os.path.join(output_folder, f'{j}{i}_search_radius_3.png'))
+            results_df.to_csv(os.path.join(output_folder, f'{j}_{i}.csv'), index=False)
             plt.clf()
-            distances_record_df.to_csv(fr'C:\Users\Lab_205\Desktop\overlapping\{j}\{j}_{i}_all.csv', index=False)
+            distances_record_df.to_csv(os.path.join(output_folder, f'{j}_{i}_all.csv'), index=False)
 
 
