@@ -67,15 +67,23 @@ def find_best_match_variable_length(segment, full_sequence, range_percentage=0.1
 if __name__ == '__main__':
     
  ###### step 3   
+    parser = argparse.ArgumentParser(description="Process DTW on segments and references")
+    parser.add_argument('--j_start', type=int, required=True, help="Start of j range")
+    parser.add_argument('--j_end', type=int, required=True, help="End of j range")
+    parser.add_argument('--i_start', type=int, required=True, help="Start of i range")
+    parser.add_argument('--i_end', type=int, required=True, help="End of i range")
+    args = parser.parse_args()
+    
+    
     base_path = os.path.dirname(__file__)  
     segment_path = os.path.join(base_path, 'segment')
     reference_path = os.path.join(base_path, 'reference_grad_20')
     
-    for j in range(7019, 7073):
+    for j in range(args.j_start, args.j_end):
         segment_file = os.path.join(segment_path, f'{j}_down.csv')
         segment = pd.read_csv(segment_file).values.reshape(-1, 1)
         
-        for i in tqdm(range(7000, 7073), desc="Processing files"):
+        for i in tqdm(range(args.i_start, args.i_end), desc="Processing files"):
             if i == j:
                 continue
             reference_file = os.path.join(reference_path, f'{i}_clear_gradient.csv')
@@ -95,5 +103,6 @@ if __name__ == '__main__':
             results_df.to_csv(os.path.join(output_folder, f'{j}_{i}.csv'), index=False)
             plt.clf()
             distances_record_df.to_csv(os.path.join(output_folder, f'{j}_{i}_all.csv'), index=False)
+
 
 

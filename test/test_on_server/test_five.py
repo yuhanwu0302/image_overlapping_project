@@ -102,3 +102,7 @@ if __name__ == '__main__':
             results_df.to_csv(os.path.join(output_folder, f'{j}_{i}.csv'), index=False)
             plt.clf()
             distances_record_df.to_csv(os.path.join(output_folder, f'{j}_{i}_all.csv'), index=False)
+
+# if want to run this code to test  you can enter 
+# python test_five.py --j_start 9999 --j_end 10000 --i_start 9999 --i_end 10003
+# It will run the code and output files in 9999 folder and it should be created 0 files 
