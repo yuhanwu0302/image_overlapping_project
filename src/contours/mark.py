@@ -140,9 +140,9 @@ def main(filepath,start,end):
     
     return part1 #,down_second  
  
-down = main(r'C:\Users\Lab_205\Desktop\overlapping\1-overlapping_image\clear\contourfiles\7015_overlapping_clear.csv',9,63)
+down = main(r'C:\Users\Lab_205\Desktop\overlapping\1-overlapping_image\clear\contourfiles\7073_overlapping_clear.csv',6,47)
 
-grad_to_csv(down,"7015_down",r"C:\Users\Lab_205\Desktop\overlapping\1-overlapping_image\clear\contourfiles\down")
+grad_to_csv(down,"7072_down",r"C:\Users\Lab_205\Desktop\overlapping\1-overlapping_image\clear\contourfiles\down")
 
 
 grad_to_csv(down_second,"70311_second_down",r"C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\find_pattern\overlapping_1\contourfiles\grad\down")
