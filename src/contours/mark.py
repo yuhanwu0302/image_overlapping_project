@@ -1,4 +1,6 @@
 import os
+import cv2 as cv
+import numpy as np
 import re
 import matplotlib.pyplot as plt
 from contours.point import Point, Gradient
@@ -44,7 +46,10 @@ def plot_mark_contours(points: List[Point], gradients: List[Gradient], start_per
     plt.legend()
     plt.title(f"Gradient Marking from {start_percent}% to {end_percent}%")
     plt.show()
-
+    marked_points = points[start_point_index:end_point_index + 1]
+    closed_contour = marked_points + [points[start_point_index]]
+    
+    return marked_points, closed_contour
 
 
 
@@ -109,6 +114,29 @@ def plot_second_derivatives(second_derivatives: List[float], start_percent: floa
         return None
 
 
+def calculate_area(closed_contour: List[Point]):
+    contour_points = np.array([(point.x, point.y) for point in closed_contour], dtype=np.int32)
+    area = cv.contourArea(contour_points)
+    return area
+
+def save_area(area, outputname="", output_dir="output"):
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+    file_path = os.path.join(output_dir, f"{outputname}_area.csv")
+    with open(file_path, "w") as f:
+        f.write("area\n")
+        f.write(f"{area}\n")
+    print(f"Area saved to: {file_path}")
+
+def save_contour_image(closed_contour: List[Point],outputname="", output_dir="output"):
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+    contour_img = np.zeros((512, 512, 3), dtype=np.uint8)
+    contour_points = np.array([(point.x, point.y) for point in closed_contour], dtype=np.int32)
+    cv.polylines(contour_img, [contour_points], isClosed=True, color=(0, 255, 0), thickness=2)
+    file_path = os.path.join(output_dir, f"{outputname}_closed_contour.png")
+    cv.imwrite(file_path, contour_img)
+    print(f"Contour image saved to: {file_path}")
 
 
 def save_mark_values(markpart:list, output_name:str, output_dir:str):
@@ -120,16 +148,12 @@ def save_mark_values(markpart:list, output_name:str, output_dir:str):
             f.writelines(value)
 
 # setting filepath intervel move and which part to which part  
-def main(filepath,start,end):
-    filepath = filepath
-    interval = 20
-    move = 1
-    start = start
-    end = end
+def main(filepath, start, end):
     points = read_contours(filepath)
-    gradients = calculate_gradients(points, interval, move)
-    plot_mark_contours(points, gradients,start,end)
-    part1 = plot_gradients(gradients,start,end,savevalue=True)
+    gradients = calculate_gradients(points, 20, 1)
+    part1 = plot_gradients(gradients, start, end, savevalue=True)
+    _, closed_contour = plot_mark_contours(points, gradients, start, end)
+
     # plot_mark_contours(points, gradients, interval, move,63,90)
     # part2 = plot_gradients(gradients, interval, move,63,90,savevalue=True)
     #second_derivatives=calculate_second_derivatives(gradients, 1)
@@ -138,13 +162,20 @@ def main(filepath,start,end):
     
     
     
-    return part1 #,down_second  
+    return part1,closed_contour #,down_second  
  
-down = main(r'C:\Users\Lab_205\Desktop\overlapping\1-overlapping_image\clear\contourfiles\7073_overlapping_clear.csv',6,47)
+def main2(closed_contour, outputname="", output_dir=""):
+    area = calculate_area(closed_contour)
+    save_area(area, outputname=outputname, output_dir=output_dir)
+    save_contour_image(closed_contour, outputname=outputname, output_dir=output_dir)
+    grad_to_csv(down, f"{outputname}_down", output_dir)
+    print(f"All files saved to {output_dir} with base name {outputname}")
 
-grad_to_csv(down,"7072_down",r"C:\Users\Lab_205\Desktop\overlapping\1-overlapping_image\clear\contourfiles\down")
+down, closed_contour = main(r'C:\Users\Lab_205\Desktop\overlapping\1-overlapping_image\clear\contourfiles\7072_overlapping_clear.csv', 6, 47)
+
+main2(closed_contour=closed_contour, outputname="7000", output_dir=r"C:\Users\Lab_205\Desktop")
 
 
-grad_to_csv(down_second,"70311_second_down",r"C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\find_pattern\overlapping_1\contourfiles\grad\down")
+
 
 

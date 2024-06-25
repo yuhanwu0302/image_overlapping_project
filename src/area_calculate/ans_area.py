@@ -25,5 +25,3 @@ for i in idlist:
 ans_whloe_dic
 df = pd.DataFrame(list(ans_whloe_dic.items()), columns=['id', 'whole_area'])
 df.to_csv(r'C:\Users\Lab_205\Desktop\ans_area.csv', index=False)
-
-###### down area calculation
