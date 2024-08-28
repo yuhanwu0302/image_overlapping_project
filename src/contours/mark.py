@@ -171,7 +171,7 @@ def main2(closed_contour, outputname="", output_dir=""):
     grad_to_csv(down, f"{outputname}_down", output_dir)
     print(f"All files saved to {output_dir} with base name {outputname}")
 
-down, closed_contour = main(r'C:\Users\Lab_205\Desktop\overlapping\1-overlapping_image\clear\contourfiles\7072_overlapping_clear.csv', 6, 47)
+down, closed_contour = main(r'C:\Users\Lab_205\Desktop\overlapping\1-overlapping_image\clear\contourfiles\7072_overlapping_clear.csv', 0, 100)
 
 main2(closed_contour=closed_contour, outputname="7000", output_dir=r"C:\Users\Lab_205\Desktop")
 

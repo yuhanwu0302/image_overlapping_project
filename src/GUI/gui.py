@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import filedialog, messagebox
 from PIL import Image, ImageTk
+from rv_background.remove_background import process_images
 import csv
 
 class ImageRotator:
