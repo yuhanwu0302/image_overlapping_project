@@ -2,10 +2,8 @@ import cv2 as cv
 import numpy as np
 import os 
 import sys
-sys.path.append(r'..\contours')
-sys.path.append(r'..')
 from contours.output import *
-
+sys.path
 
 
 def set_starting_point_to_leftmost(contour):
@@ -58,8 +56,9 @@ def get_all_file_paths(targetdir):
 
 
 
-# targetdir = r'C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\all_data\clear'
-# all_files = get_all_file_paths(targetdir)
-# for file_path in all_files:
-#     findcontours(file_path,r'C:\Users\Lab_205\Desktop\image_overlapping_project\dataset_output\all_data\contourfiles')
-print(get_all_file_paths(r"C:\Users\Lab_205\Desktop\image_overlapping_project\findcontours"))
+def run():
+    targetdir = r'C:\Users\Lab_205\Desktop\overlapping_1\clear'
+    all_files = get_all_file_paths(targetdir)
+    for file_path in all_files:
+        findcontours(file_path,r'C:\Users\Lab_205\Desktop\overlapping_1\clear\contourfiles')
+

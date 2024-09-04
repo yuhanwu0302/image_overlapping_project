@@ -5,7 +5,7 @@ import glob
 import re
 import matplotlib.pyplot as plt
 from typing import List
-from point import Point , Gradient
+from contours.point import Point , Gradient
 import pandas as pd 
 
 def get_all_file_paths(targetdir: str):
@@ -60,9 +60,12 @@ def gradients_plot(gradients: List[Gradient]):
     plt.ylabel('Gradient Value')
     plt.show()
 
-def grad_to_csv(gradlist: List[float],output_csv_name: str):
+def grad_to_csv(gradlist: List[float],output_csv_name: str, output_dir:str):
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)    
+    file_name = os.path.join(output_dir, f"{output_csv_name}.csv")
     df = pd.DataFrame(gradlist)
-    df.to_csv(output_csv_name, index=False,encoding="utf-8",header=False)
+    df.to_csv(file_name, index=False,encoding="utf-8",header=False)
  
 
 

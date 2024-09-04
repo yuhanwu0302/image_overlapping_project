@@ -1,9 +1,9 @@
 import cv2 as cv
 import numpy as np
 import os
-from draw_contours import *
+from contours.draw_contours import *
 import pandas as pd
-from tips_rotated import *
+from contours.tips_rotated import *
 
 # # 定義需要旋轉的葉片編號
 # need_rotation = set([1065, 1067, 1069, 1070, 1071, 1072, 1074, 1076, 1085, 1086, 1087, 1088, 1089, 1090, 1092, 1093, 1094, 1096,
